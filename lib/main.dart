@@ -1,6 +1,7 @@
 import 'package:appcheck/appcheck.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:soundplayer/soundplayer.dart';
 
 void main() {
@@ -16,21 +17,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
@@ -50,7 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final appCheck = AppCheck();
   final Soundplayer soundPlayer = Soundplayer(16, 1);
   List<AppInfo> applications = [];
-  final ScrollController _scrollController =
+  final ScrollController scrollController =
       ScrollController(); // Declare ScrollController
   late int soundId;
   double _previousScrollOffset = 0.0;
@@ -65,15 +51,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void getApplications() async {
     var apps = await appCheck.getInstalledApps();
-    // apps = apps?.where((app) => !(app.isSystemApp ?? false)).toList();
-    apps = apps
-        ?.where(
-          (app) =>
-              // !(app.packageName.startsWith('com.google.android')) &&
-              !(app.packageName.startsWith('com.google.internal')) &&
-              !(app.packageName.startsWith('com.android')),
-        )
-        .toList();
+    apps = apps?.where((app) => !(app.isSystemApp ?? false)).toList();
+    // apps = apps
+    //     ?.where(
+    //       (app) =>
+    //           // !(app.packageName.startsWith('com.google.android')) &&
+    //           !(app.packageName.startsWith('com.google.internal')) &&
+    //           !(app.packageName.startsWith('com.oplus')) &&
+    //           !(app.packageName.startsWith('com.android')),
+    //     )
+    //     .toList();
     apps?.sort(
       (a, b) => a.appName!.toLowerCase().compareTo(b.appName!.toLowerCase()),
     );
@@ -81,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       applications = apps ?? [];
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _previousScrollOffset = _scrollController.offset;
+        _previousScrollOffset = scrollController.offset;
       });
     });
   }
@@ -92,54 +79,79 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     getApplications();
     loadTickSound();
-    _scrollController.addListener(_onScroll); // Add the listener
+    scrollController.addListener(_onScroll); // Add the listener
   }
 
   @override
   void dispose() {
-    _scrollController.dispose(); // Dispose the controller
+    scrollController.dispose(); // Dispose the controller
     super.dispose();
   }
 
   void _onScroll() {
     // Get the current scroll offset
-    double currentScrollOffset = _scrollController.offset;
+    double currentScrollOffset = scrollController.offset;
 
     // Check if the user is scrolling and if the scroll direction is bringing
     // new content into view.
     // We check if the list is not at the extreme ends to avoid triggering
     // the event when overscrolling.
-    if (_scrollController.position.userScrollDirection !=
-            ScrollDirection.idle &&
-        !_scrollController.position.atEdge) {
+    if (scrollController.position.userScrollDirection != ScrollDirection.idle &&
+        !scrollController.position.atEdge) {
       var diff = (currentScrollOffset - _previousScrollOffset).abs();
-      if (diff > 32) {
+      // debugPrint('diff: $diff');
+      if (diff > 75) {
         debugPrint('play');
         soundPlayer.play(soundId);
+        // Update the previous scroll offset for the next scroll event
+        _previousScrollOffset = currentScrollOffset;
       }
     }
-
-    // Update the previous scroll offset for the next scroll event
-    _previousScrollOffset = currentScrollOffset;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: ListView.builder(
-        controller: _scrollController, // Attach the controller
-        padding: const EdgeInsets.all(16),
-        itemCount: applications.length,
-        itemBuilder: (context, index) {
-          final app = applications[index];
-          return ListTile(
-            title: Text(app.appName ?? app.packageName),
-            leading: app.icon != null ? Image.memory(app.icon!) : null,
-            subtitle: Text(app.packageName),
-            onTap: () => _launchApp(app),
-          );
-        },
+      appBar: AppBar(
+        title: const Text('Launcher Search'),
+        surfaceTintColor: Colors.white54,
+      ),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: ListView.builder(
+          controller: scrollController, // Attach the controller
+          padding: const EdgeInsets.all(16),
+          itemCount: applications.length,
+          itemBuilder: (context, index) {
+            final app = applications[index];
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: ListTile(
+                title: Text(app.appName ?? app.packageName),
+                // textColor: Colors.white,
+                titleTextStyle: TextStyle(color: Colors.black),
+                subtitleTextStyle: TextStyle(color: Colors.black38),
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Colors.grey.shade300, width: 0.5),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                tileColor: Colors.white54,
+                leading: app.icon != null ? Image.memory(app.icon!) : null,
+                subtitle: Text(app.packageName),
+                onTap: () => _launchApp(app),
+                // onLongPress: () => _longPress(context, app),
+                onLongPress: () {
+                  showMaterialModalBottomSheet(
+                    expand: false,
+                    context: context,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) => ModalFit(app: app),
+                  );
+                },
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -156,5 +168,53 @@ class _MyHomePageState extends State<MyHomePage> {
       );
       debugPrint("Error launching app: $e");
     }
+  }
+}
+
+class ModalFit extends StatelessWidget {
+  final AppInfo app;
+  const ModalFit({super.key, required this.app});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              app.appName ?? app.packageName ?? '',
+              style: TextStyle(fontSize: 24, color: Colors.black),
+            ),
+            ListTile(
+              title: Text('Edit'),
+              leading: Icon(Icons.edit),
+              onTap: () => Navigator.of(context).pop(),
+            ),
+            ListTile(
+              title: Text('Copy'),
+              leading: Icon(Icons.content_copy),
+              onTap: () => Navigator.of(context).pop(),
+            ),
+            ListTile(
+              title: Text('Cut'),
+              leading: Icon(Icons.content_cut),
+              onTap: () => Navigator.of(context).pop(),
+            ),
+            ListTile(
+              title: Text('Move'),
+              leading: Icon(Icons.folder_open),
+              onTap: () => Navigator.of(context).pop(),
+            ),
+            ListTile(
+              title: Text('Delete'),
+              leading: Icon(Icons.delete),
+              onTap: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
