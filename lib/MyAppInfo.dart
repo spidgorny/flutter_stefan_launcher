@@ -1,0 +1,34 @@
+import 'dart:convert';
+
+import 'package:appcheck/appcheck.dart';
+
+class MyAppInfo {
+  MyAppInfo({required this.app, this.isFav = false});
+  final AppInfo app;
+  bool isFav;
+
+  static MyAppInfo fromJson(String source) {
+    Map<String, dynamic> json = jsonDecode(source);
+    return MyAppInfo(
+      app: AppInfo(
+        appName: json['app']['appName'],
+        packageName: json['app']['packageName'],
+        versionName: json['app']['versionName'],
+        versionCode: json['app']['versionCode'],
+        isSystemApp: json['app']['isSystemApp'],
+      ),
+      isFav: json['isFav'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'app': {
+      'appName': app.appName,
+      'packageName': app.packageName,
+      'versionName': app.versionName,
+      'versionCode': app.versionCode,
+      'isSystemApp': app.isSystemApp,
+    },
+    'isFav': isFav,
+  };
+}
