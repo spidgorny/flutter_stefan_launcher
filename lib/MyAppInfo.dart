@@ -16,6 +16,9 @@ class MyAppInfo {
         versionName: json['app']['versionName'],
         versionCode: json['app']['versionCode'],
         isSystemApp: json['app']['isSystemApp'],
+        icon: json['app']['icon'] != null
+            ? base64Decode(json['app']['icon'])
+            : null,
       ),
       isFav: json['isFav'],
     );
@@ -28,6 +31,7 @@ class MyAppInfo {
       'versionName': app.versionName,
       'versionCode': app.versionCode,
       'isSystemApp': app.isSystemApp,
+      'icon': app.icon != null ? base64Encode(app.icon!) : null,
     },
     'isFav': isFav,
   };

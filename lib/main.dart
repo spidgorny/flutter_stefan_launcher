@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+
+// Import other platform implementations if you are targeting other platforms
 
 import 'app_list.dart';
 
+final getIt = GetIt.instance;
+
+void setupDependencies() {
+  // getIt.registerLazySingleton(() => ApiService());
+  // getIt.registerFactory(() => DataRepository(apiService: getIt<ApiService>()));
+}
+
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  setupDependencies();
   runApp(const MyApp());
 }
 

@@ -1,10 +1,12 @@
 import 'package:appcheck/appcheck.dart';
+import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:soundplayer/soundplayer.dart';
 
-import 'modal_fit.dart';
+import 'MyAppInfo.dart';
+import 'data_repo.dart';
+import 'list-item.dart';
 
 class AppList extends StatefulWidget {
   const AppList({super.key, required this.title});
@@ -23,6 +25,7 @@ class _AppListState extends State<AppList> {
   late int soundId;
   double _previousScrollOffset = 0.0;
   bool isLoading = true;
+  final DataRepo dataRepo = DataRepo();
 
   void loadTickSound() async {
     debugPrint('Sound player init...');
@@ -48,6 +51,9 @@ class _AppListState extends State<AppList> {
       (a, b) => a.appName!.toLowerCase().compareTo(b.appName!.toLowerCase()),
     );
 
+    if (!kIsWeb && !kDebugMode) {
+      await Future.delayed(const Duration(seconds: 2));
+    }
     setState(() {
       applications = apps ?? [];
       isLoading = false;
@@ -95,10 +101,27 @@ class _AppListState extends State<AppList> {
 
   @override
   Widget build(BuildContext context) {
+    var nonFavApps = applications
+        .where(
+          (app) => !(dataRepo.favorites.any(
+            (x) => x.app.packageName == app.packageName,
+          )),
+        )
+        .toList();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('[search]'),
         surfaceTintColor: Colors.white54,
+        actions: [
+          FilledButton(
+            onPressed: () {
+              debugPrint("Fav len: ${dataRepo.favorites.length}");
+              dataRepo.loadFavorites();
+            },
+            child: Icon(Icons.settings),
+          ),
+        ],
       ),
       backgroundColor: Colors.white,
       body: isLoading
@@ -107,57 +130,20 @@ class _AppListState extends State<AppList> {
               child: ListView.builder(
                 controller: scrollController, // Attach the controller
                 padding: const EdgeInsets.all(16),
-                itemCount: applications.length,
+                itemCount: dataRepo.favorites.length + nonFavApps.length,
                 itemBuilder: (context, index) {
-                  final app = applications[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
-                    child: ListTile(
-                      title: Text(app.appName ?? app.packageName),
-                      // textColor: Colors.white,
-                      titleTextStyle: TextStyle(color: Colors.black),
-                      subtitleTextStyle: TextStyle(color: Colors.black38),
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Colors.grey.shade300,
-                          width: 0.5,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      tileColor: Colors.white54,
-                      leading: app.icon != null
-                          ? Image.memory(app.icon!)
-                          : null,
-                      subtitle: Text(app.packageName),
-                      onTap: () => _launchApp(app),
-                      // onLongPress: () => _longPress(context, app),
-                      onLongPress: () {
-                        showMaterialModalBottomSheet(
-                          expand: false,
-                          context: context,
-                          backgroundColor: Colors.transparent,
-                          builder: (context) => ModalFit(app: app),
+                  final app = index < dataRepo.favorites.length
+                      ? dataRepo.favorites[index]
+                      : MyAppInfo(
+                          app: nonFavApps[index - dataRepo.favorites.length],
                         );
-                      },
-                    ),
-                  );
+                  return ListItemForApp(app, (app) {
+                    dataRepo.toggleFavorite(app);
+                    setState(() {});
+                  });
                 },
               ),
             ),
     );
-  }
-
-  Future<void> _launchApp(AppInfo app) async {
-    try {
-      await appCheck.launchApp(app.packageName);
-      debugPrint("${app.appName ?? app.packageName} launched!");
-    } catch (e) {
-      if (!mounted) return; // Ensure the widget is still in the tree
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("${app.appName ?? app.packageName} not found!")),
-      );
-      debugPrint("Error launching app: $e");
-    }
   }
 }

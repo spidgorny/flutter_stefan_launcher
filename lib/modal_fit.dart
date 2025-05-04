@@ -1,8 +1,10 @@
-import 'package:appcheck/appcheck.dart';
 import 'package:flutter/material.dart';
 
+import 'MyAppInfo.dart';
+
 class ModalFit extends StatelessWidget {
-  final AppInfo app;
+  static const ADD_TO_FAVORITES = 'Add to Favorites';
+  final MyAppInfo app;
   const ModalFit({super.key, required this.app});
 
   @override
@@ -14,31 +16,22 @@ class ModalFit extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              app.appName ?? app.packageName ?? '',
+              app.app.appName ?? app.app.packageName ?? '',
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
+            app.isFav
+                ? ListTile(
+                    title: Text('Remove from Favorites'),
+                    leading: Icon(Icons.star_border),
+                    onTap: () => Navigator.of(context).pop(ADD_TO_FAVORITES),
+                  )
+                : ListTile(
+                    title: Text('Add to Favorites'),
+                    leading: Icon(Icons.star),
+                    onTap: () => Navigator.of(context).pop(ADD_TO_FAVORITES),
+                  ),
             ListTile(
-              title: Text('Edit'),
-              leading: Icon(Icons.edit),
-              onTap: () => Navigator.of(context).pop(),
-            ),
-            ListTile(
-              title: Text('Copy'),
-              leading: Icon(Icons.content_copy),
-              onTap: () => Navigator.of(context).pop(),
-            ),
-            ListTile(
-              title: Text('Cut'),
-              leading: Icon(Icons.content_cut),
-              onTap: () => Navigator.of(context).pop(),
-            ),
-            ListTile(
-              title: Text('Move'),
-              leading: Icon(Icons.folder_open),
-              onTap: () => Navigator.of(context).pop(),
-            ),
-            ListTile(
-              title: Text('Delete'),
+              title: Text('Uninstall'),
               leading: Icon(Icons.delete),
               onTap: () => Navigator.of(context).pop(),
             ),
