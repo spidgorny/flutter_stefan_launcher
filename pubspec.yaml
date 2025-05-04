@@ -39,6 +39,7 @@ dependencies:
   modal_bottom_sheet: ^3.0.0
   shared_preferences: ^2.5.3
   get_it: ^8.0.3
+  watch_it: ^1.6.5
 
 dev_dependencies:
   flutter_test:

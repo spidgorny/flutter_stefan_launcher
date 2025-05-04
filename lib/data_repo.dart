@@ -7,7 +7,7 @@ import 'package:shared_preferences_android/shared_preferences_android.dart';
 
 import 'MyAppInfo.dart';
 
-class DataRepo {
+class DataRepo with ChangeNotifier {
   late final SharedPreferencesWithCache _asyncPrefs;
   List<MyAppInfo> favorites = [];
 
@@ -17,7 +17,9 @@ class DataRepo {
   }
 
   Future<void> init() async {
-    initSharedPrefs().then((result) => loadFavorites());
+    await initSharedPrefs();
+    await loadFavorites();
+    notifyListeners();
   }
 
   Future<void> initSharedPrefs() async {
@@ -39,7 +41,6 @@ class DataRepo {
 
   Future<void> loadFavorites() async {
     debugPrint('loadFav');
-    // final SharedPreferencesAsyncAndroid prefs = SharedPreferencesAsyncAndroid();
     var json = _asyncPrefs.getStringList('favorites');
     debugPrint('favorites: $json');
     if (json != null) {
@@ -62,6 +63,7 @@ class DataRepo {
     } else {
       favorites.add(MyAppInfo(app: app, isFav: true));
     }
+    notifyListeners();
     await saveFavorites();
   }
 }

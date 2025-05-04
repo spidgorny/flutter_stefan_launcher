@@ -3,12 +3,13 @@ import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:soundplayer/soundplayer.dart';
+import 'package:watch_it/watch_it.dart';
 
 import 'MyAppInfo.dart';
 import 'data_repo.dart';
 import 'list-item.dart';
 
-class AppList extends StatefulWidget {
+class AppList extends StatefulWidget with WatchItStatefulWidgetMixin {
   const AppList({super.key, required this.title});
   final String title;
 
@@ -25,7 +26,7 @@ class _AppListState extends State<AppList> {
   late int soundId;
   double _previousScrollOffset = 0.0;
   bool isLoading = true;
-  final DataRepo dataRepo = DataRepo();
+  // final DataRepo dataRepo = getIt.watch<DataRepo>();
 
   void loadTickSound() async {
     debugPrint('Sound player init...');
@@ -101,6 +102,7 @@ class _AppListState extends State<AppList> {
 
   @override
   Widget build(BuildContext context) {
+    final dataRepo = watch(di<DataRepo>());
     var nonFavApps = applications
         .where(
           (app) => !(dataRepo.favorites.any(
