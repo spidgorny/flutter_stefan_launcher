@@ -23,15 +23,19 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Stefan Launcher',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        textSelectionTheme: TextSelectionThemeData(
+          selectionColor: Color(
+            0xFF3297FD,
+          ).withOpacity(0.5), // Choose your desired color and opacity
+        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
       ),
-      home: const AppList(title: 'Flutter Demo Home Page'),
+      home: const AppList(),
     );
   }
 }

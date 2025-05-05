@@ -1,3 +1,4 @@
+import 'package:app_usage/app_usage.dart';
 import 'package:appcheck/appcheck.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'package:flutter/material.dart';
@@ -10,8 +11,7 @@ import 'data_repo.dart';
 import 'list-item.dart';
 
 class AppList extends StatefulWidget with WatchItStatefulWidgetMixin {
-  const AppList({super.key, required this.title});
-  final String title;
+  const AppList({super.key});
 
   @override
   State<AppList> createState() => _AppListState();
@@ -27,6 +27,43 @@ class _AppListState extends State<AppList> {
   double _previousScrollOffset = 0.0;
   bool isLoading = true;
   // final DataRepo dataRepo = getIt.watch<DataRepo>();
+  final TextEditingController _searchController = TextEditingController();
+  List<AppUsageInfo> _infos = [];
+
+  @override
+  void initState() {
+    debugPrint('init state');
+    super.initState();
+    getApplications();
+    loadTickSound();
+    scrollController.addListener(_onScroll); // Add the listener
+    getUsageStats();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose(); // Dispose the controller
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void getUsageStats() async {
+    try {
+      DateTime endDate = DateTime.now();
+      DateTime startDate = endDate.subtract(Duration(hours: 1));
+      List<AppUsageInfo> infoList = await AppUsage().getAppUsage(
+        startDate,
+        endDate,
+      );
+      setState(() => _infos = infoList);
+
+      for (var info in infoList) {
+        print(info.toString());
+      }
+    } on Exception catch (exception) {
+      print(exception);
+    }
+  }
 
   void loadTickSound() async {
     debugPrint('Sound player init...');
@@ -64,21 +101,6 @@ class _AppListState extends State<AppList> {
     });
   }
 
-  @override
-  void initState() {
-    debugPrint('init state');
-    super.initState();
-    getApplications();
-    loadTickSound();
-    scrollController.addListener(_onScroll); // Add the listener
-  }
-
-  @override
-  void dispose() {
-    scrollController.dispose(); // Dispose the controller
-    super.dispose();
-  }
-
   void _onScroll() {
     // Get the current scroll offset
     double currentScrollOffset = scrollController.offset;
@@ -112,18 +134,33 @@ class _AppListState extends State<AppList> {
         .toList();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('[search]'),
-        surfaceTintColor: Colors.white54,
-        actions: [
-          FilledButton(
-            onPressed: () {
-              debugPrint("Fav len: ${dataRepo.favorites.length}");
-              dataRepo.loadFavorites();
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: AppBar(
+          title: TextField(
+            controller: _searchController,
+            decoration: const InputDecoration(
+              hintText: 'Search...',
+              border: InputBorder.none,
+            ),
+            keyboardType: TextInputType.text,
+            onChanged: (value) {
+              // Handle search logic here
             },
-            child: Icon(Icons.settings),
+            cursorColor: Colors.black,
           ),
-        ],
+          surfaceTintColor: Colors.white30,
+          // backgroundColor: Colors.amber,
+          foregroundColor: Colors.red,
+
+          // FilledButton(
+          //   onPressed: () {
+          //     debugPrint("Fav len: ${dataRepo.favorites.length}");
+          //     dataRepo.loadFavorites();
+          //   },
+          //   child: Icon(Icons.settings),
+          // ),
+        ),
       ),
       backgroundColor: Colors.white,
       body: isLoading
