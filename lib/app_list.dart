@@ -1,6 +1,5 @@
-import 'package:app_usage/app_usage.dart';
 import 'package:appcheck/appcheck.dart';
-import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:soundplayer/soundplayer.dart';
@@ -25,10 +24,7 @@ class _AppListState extends State<AppList> {
       ScrollController(); // Declare ScrollController
   late int soundId;
   double _previousScrollOffset = 0.0;
-  bool isLoading = true;
-  // final DataRepo dataRepo = getIt.watch<DataRepo>();
   final TextEditingController _searchController = TextEditingController();
-  List<AppUsageInfo> _infos = [];
 
   @override
   void initState() {
@@ -37,7 +33,6 @@ class _AppListState extends State<AppList> {
     getApplications();
     loadTickSound();
     scrollController.addListener(_onScroll); // Add the listener
-    getUsageStats();
   }
 
   @override
@@ -45,24 +40,6 @@ class _AppListState extends State<AppList> {
     scrollController.dispose(); // Dispose the controller
     _searchController.dispose();
     super.dispose();
-  }
-
-  void getUsageStats() async {
-    try {
-      DateTime endDate = DateTime.now();
-      DateTime startDate = endDate.subtract(Duration(hours: 1));
-      List<AppUsageInfo> infoList = await AppUsage().getAppUsage(
-        startDate,
-        endDate,
-      );
-      setState(() => _infos = infoList);
-
-      for (var info in infoList) {
-        print(info.toString());
-      }
-    } on Exception catch (exception) {
-      print(exception);
-    }
   }
 
   void loadTickSound() async {
@@ -92,9 +69,9 @@ class _AppListState extends State<AppList> {
     if (!kIsWeb && !kDebugMode) {
       await Future.delayed(const Duration(seconds: 2));
     }
+
     setState(() {
       applications = apps ?? [];
-      isLoading = false;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _previousScrollOffset = scrollController.offset;
       });
@@ -152,18 +129,30 @@ class _AppListState extends State<AppList> {
           surfaceTintColor: Colors.white30,
           // backgroundColor: Colors.amber,
           foregroundColor: Colors.red,
+          actions: [
+            IconButton(
+              icon: const Icon(
+                Icons.settings,
+              ), // Replace with your desired icon
+              onPressed: () {
+                for (var info in dataRepo.appUsageInfo) {
+                  debugPrint(info.toString());
+                }
+              },
+            ),
 
-          // FilledButton(
-          //   onPressed: () {
-          //     debugPrint("Fav len: ${dataRepo.favorites.length}");
-          //     dataRepo.loadFavorites();
-          //   },
-          //   child: Icon(Icons.settings),
-          // ),
+            // FilledButton(
+            //   onPressed: () {
+            //     debugPrint("Fav len: ${dataRepo.favorites.length}");
+            //     dataRepo.loadFavorites();
+            //   },
+            //   child: Icon(Icons.settings),
+            // ),
+          ],
         ),
       ),
       backgroundColor: Colors.white,
-      body: isLoading
+      body: dataRepo.isLoading
           ? const Center(child: CircularProgressIndicator())
           : SafeArea(
               child: ListView.builder(

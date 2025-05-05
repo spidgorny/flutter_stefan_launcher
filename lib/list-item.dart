@@ -26,7 +26,11 @@ class ListItemForApp extends StatelessWidget {
         ),
         tileColor: Colors.white54,
         leading: app.app.icon != null ? Image.memory(app.app.icon!) : null,
-        subtitle: Text(app.app.packageName),
+        subtitle: Text(
+          app.usageTime != null
+              ? '${app.usageTime.toString().substring(0, 5)} h'
+              : app.app.packageName,
+        ),
         trailing: app.isFav ? Icon(Icons.star, color: Colors.yellow) : null,
         onTap: () => _launchApp(context, app.app),
         // onLongPress: () => _longPress(context, app),

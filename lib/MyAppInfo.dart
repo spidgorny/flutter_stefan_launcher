@@ -3,9 +3,10 @@ import 'dart:convert';
 import 'package:appcheck/appcheck.dart';
 
 class MyAppInfo {
-  MyAppInfo({required this.app, this.isFav = false});
+  MyAppInfo({required this.app, this.isFav = false, this.usageTime});
   final AppInfo app;
   bool isFav;
+  Duration? usageTime;
 
   static MyAppInfo fromJson(String source) {
     Map<String, dynamic> json = jsonDecode(source);

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:app_usage/app_usage.dart';
 import 'package:appcheck/appcheck.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,6 +11,8 @@ import 'MyAppInfo.dart';
 class DataRepo with ChangeNotifier {
   late final SharedPreferencesWithCache _asyncPrefs;
   List<MyAppInfo> favorites = [];
+  List<AppUsageInfo> appUsageInfo = [];
+  bool isLoading = true;
 
   DataRepo() {
     debugPrint('DataRepo init');
@@ -19,6 +22,10 @@ class DataRepo with ChangeNotifier {
   Future<void> init() async {
     await initSharedPrefs();
     await loadFavorites();
+    isLoading = false;
+    notifyListeners();
+    var usage = await getUsageStats();
+    injectUsageIntoAppList(usage);
     notifyListeners();
   }
 
@@ -65,5 +72,32 @@ class DataRepo with ChangeNotifier {
     }
     notifyListeners();
     await saveFavorites();
+  }
+
+  Future<List<AppUsageInfo>> getUsageStats() async {
+    try {
+      DateTime endDate = DateTime.now();
+      DateTime startDate = endDate.subtract(
+        Duration(hours: DateTime.now().hour, minutes: DateTime.now().minute),
+      );
+      List<AppUsageInfo> infoList = await AppUsage().getAppUsage(
+        startDate,
+        endDate,
+      );
+      appUsageInfo = infoList;
+      return infoList;
+    } on Exception catch (exception) {
+      print(exception);
+      return [];
+    }
+  }
+
+  void injectUsageIntoAppList(List<AppUsageInfo> usage) {
+    for (var app in favorites) {
+      var usageInfo = usage.firstWhere(
+        (element) => element.packageName == app.app.packageName,
+      );
+      app.usageTime = usageInfo.usage;
+    }
   }
 }
