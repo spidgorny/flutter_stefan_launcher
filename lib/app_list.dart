@@ -1,5 +1,4 @@
 import 'package:appcheck/appcheck.dart';
-import 'package:awesome_bottom_bar/awesome_bottom_bar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stefan_launcher/main.dart';
@@ -22,13 +21,6 @@ class _AppListState extends State<AppList> {
   List<AppInfo> applications = [];
   final TextEditingController _searchController = TextEditingController();
   final SoundService soundService = getIt<SoundService>();
-  List<TabItem> items = [
-    // TabItem(icon: Icons.adaptive, title: ''),
-    TabItem(icon: Icons.phone, title: 'phone'),
-    TabItem(icon: Icons.web, title: 'browser'),
-    TabItem(icon: Icons.photo, title: 'photos'),
-    TabItem(icon: Icons.camera, title: 'camera'),
-  ];
 
   @override
   void initState() {
@@ -157,23 +149,42 @@ class _AppListState extends State<AppList> {
                 },
               ),
             ),
-      bottomNavigationBar: BottomBarFloating(
-        items: items,
-        backgroundColor: Colors.blueAccent,
-        color: Colors.white,
-        colorSelected: Colors.white,
-        // indexSelected: visit,
-        // paddingVertical: 24,
-        onTap: (int index) => () async {
-          debugPrint('index: $index');
-          switch (index) {
-            case 0:
-              {
-                await appCheck.launchApp('google.camera');
-              }
-          }
-          setState(() {});
-        },
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+        color: Colors.blueAccent,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(
+              icon: Icon(Icons.phone, size: 48, color: Colors.white),
+              tooltip: 'phone',
+              onPressed: () {
+                appCheck.launchApp('com.google.android.dialer');
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.web, size: 48, color: Colors.white),
+              tooltip: 'web',
+              onPressed: () {
+                appCheck.launchApp('com.android.chrome');
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.photo, size: 48, color: Colors.white),
+              tooltip: 'photo',
+              onPressed: () {
+                appCheck.launchApp('com.google.android.apps.photos');
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.camera, size: 48, color: Colors.white),
+              tooltip: 'camera',
+              onPressed: () {
+                appCheck.launchApp('com.android.camera2');
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
