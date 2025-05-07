@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_stefan_launcher/data_repo.dart';
+import 'package:flutter_stefan_launcher/sound_service.dart';
 import 'package:get_it/get_it.dart';
 
 // Import other platform implementations if you are targeting other platforms
@@ -10,6 +11,7 @@ final getIt = GetIt.instance;
 
 void setupDependencies() {
   getIt.registerSingleton(DataRepo());
+  getIt.registerSingleton(SoundService());
   // getIt.registerLazySingleton(() => ApiService());
   // getIt.registerFactory(() => DataRepository(apiService: getIt<ApiService>()));
 }

@@ -1,8 +1,8 @@
 import 'package:appcheck/appcheck.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:soundplayer/soundplayer.dart';
+import 'package:flutter_stefan_launcher/main.dart';
+import 'package:flutter_stefan_launcher/sound_service.dart';
 import 'package:watch_it/watch_it.dart';
 
 import 'MyAppInfo.dart';
@@ -18,36 +18,23 @@ class AppList extends StatefulWidget with WatchItStatefulWidgetMixin {
 
 class _AppListState extends State<AppList> {
   final appCheck = AppCheck();
-  final Soundplayer soundPlayer = Soundplayer(16, 1);
   List<AppInfo> applications = [];
-  final ScrollController scrollController =
-      ScrollController(); // Declare ScrollController
-  late int soundId;
-  double _previousScrollOffset = 0.0;
   final TextEditingController _searchController = TextEditingController();
+  final SoundService soundService = getIt<SoundService>();
 
   @override
   void initState() {
     debugPrint('init state');
     super.initState();
     getApplications();
-    loadTickSound();
-    scrollController.addListener(_onScroll); // Add the listener
+    soundService.init();
   }
 
   @override
   void dispose() {
-    scrollController.dispose(); // Dispose the controller
+    soundService.dispose(); // Dispose the controller
     _searchController.dispose();
     super.dispose();
-  }
-
-  void loadTickSound() async {
-    debugPrint('Sound player init...');
-    soundPlayer.initSoundplayer(16);
-    debugPrint('Sound player initialized');
-    soundId = await soundPlayer.load("assets/click.wav");
-    debugPrint('Sound loaded id=$soundId/**/');
   }
 
   void getApplications() async {
@@ -73,30 +60,9 @@ class _AppListState extends State<AppList> {
     setState(() {
       applications = apps ?? [];
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _previousScrollOffset = scrollController.offset;
+        soundService.initScrollPosition();
       });
     });
-  }
-
-  void _onScroll() {
-    // Get the current scroll offset
-    double currentScrollOffset = scrollController.offset;
-
-    // Check if the user is scrolling and if the scroll direction is bringing
-    // new content into view.
-    // We check if the list is not at the extreme ends to avoid triggering
-    // the event when overscrolling.
-    if (scrollController.position.userScrollDirection != ScrollDirection.idle &&
-        !scrollController.position.atEdge) {
-      var diff = (currentScrollOffset - _previousScrollOffset).abs();
-      // debugPrint('diff: $diff');
-      if (diff > 75) {
-        debugPrint('play');
-        soundPlayer.play(soundId);
-        // Update the previous scroll offset for the next scroll event
-        _previousScrollOffset = currentScrollOffset;
-      }
-    }
   }
 
   @override
@@ -109,8 +75,19 @@ class _AppListState extends State<AppList> {
           )),
         )
         .toList();
+    debugPrint('search: ${_searchController.text}');
+    if (_searchController.text != '') {
+      nonFavApps = nonFavApps
+          .where(
+            (app) => app.appName!.toLowerCase().contains(
+              _searchController.text.toLowerCase(),
+            ),
+          )
+          .toList();
+    }
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppBar(
@@ -122,7 +99,7 @@ class _AppListState extends State<AppList> {
             ),
             keyboardType: TextInputType.text,
             onChanged: (value) {
-              // Handle search logic here
+              setState(() {}); // typing should trigger widget refresh
             },
             cursorColor: Colors.black,
           ),
@@ -151,12 +128,12 @@ class _AppListState extends State<AppList> {
           ],
         ),
       ),
-      backgroundColor: Colors.white,
       body: dataRepo.isLoading
           ? const Center(child: CircularProgressIndicator())
           : SafeArea(
               child: ListView.builder(
-                controller: scrollController, // Attach the controller
+                controller:
+                    soundService.scrollController, // Attach the controller
                 padding: const EdgeInsets.all(16),
                 itemCount: dataRepo.favorites.length + nonFavApps.length,
                 itemBuilder: (context, index) {
