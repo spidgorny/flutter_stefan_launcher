@@ -23,6 +23,7 @@ class _AppListState extends State<AppList> {
   final TextEditingController _searchController = TextEditingController();
   final SoundService soundService = getIt<SoundService>();
   List<TabItem> items = [
+    // TabItem(icon: Icons.adaptive, title: ''),
     TabItem(icon: Icons.phone, title: 'phone'),
     TabItem(icon: Icons.web, title: 'browser'),
     TabItem(icon: Icons.photo, title: 'photos'),
@@ -156,19 +157,23 @@ class _AppListState extends State<AppList> {
                 },
               ),
             ),
-      bottomNavigationBar: Container(
-        // padding: const EdgeInsets.only(bottom: 30, right: 32, left: 32),
-        child: BottomBarFloating(
-          items: items,
-          backgroundColor: Colors.blueAccent,
-          color: Colors.white,
-          colorSelected: Colors.white,
-          // indexSelected: visit,
-          // paddingVertical: 24,
-          onTap: (int index) => setState(() {
-            // visit = index;
-          }),
-        ),
+      bottomNavigationBar: BottomBarFloating(
+        items: items,
+        backgroundColor: Colors.blueAccent,
+        color: Colors.white,
+        colorSelected: Colors.white,
+        // indexSelected: visit,
+        // paddingVertical: 24,
+        onTap: (int index) => () async {
+          debugPrint('index: $index');
+          switch (index) {
+            case 0:
+              {
+                await appCheck.launchApp('google.camera');
+              }
+          }
+          setState(() {});
+        },
       ),
     );
   }
