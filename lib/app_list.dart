@@ -1,4 +1,5 @@
 import 'package:appcheck/appcheck.dart';
+import 'package:awesome_bottom_bar/awesome_bottom_bar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stefan_launcher/main.dart';
@@ -21,6 +22,12 @@ class _AppListState extends State<AppList> {
   List<AppInfo> applications = [];
   final TextEditingController _searchController = TextEditingController();
   final SoundService soundService = getIt<SoundService>();
+  List<TabItem> items = [
+    TabItem(icon: Icons.phone, title: 'phone'),
+    TabItem(icon: Icons.web, title: 'browser'),
+    TabItem(icon: Icons.photo, title: 'photos'),
+    TabItem(icon: Icons.camera, title: 'camera'),
+  ];
 
   @override
   void initState() {
@@ -105,7 +112,7 @@ class _AppListState extends State<AppList> {
           ),
           surfaceTintColor: Colors.white30,
           // backgroundColor: Colors.amber,
-          foregroundColor: Colors.red,
+          foregroundColor: Colors.blueAccent,
           actions: [
             IconButton(
               icon: const Icon(
@@ -149,6 +156,20 @@ class _AppListState extends State<AppList> {
                 },
               ),
             ),
+      bottomNavigationBar: Container(
+        // padding: const EdgeInsets.only(bottom: 30, right: 32, left: 32),
+        child: BottomBarFloating(
+          items: items,
+          backgroundColor: Colors.blueAccent,
+          color: Colors.white,
+          colorSelected: Colors.white,
+          // indexSelected: visit,
+          // paddingVertical: 24,
+          onTap: (int index) => setState(() {
+            // visit = index;
+          }),
+        ),
+      ),
     );
   }
 }
