@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_stefan_launcher/app_wheel.dart';
 import 'package:flutter_stefan_launcher/data_repo.dart';
 import 'package:flutter_stefan_launcher/sound_service.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 
 // Import other platform implementations if you are targeting other platforms
 
 import 'app_list.dart';
 
 final getIt = GetIt.instance;
+
+// GoRouter configuration
+final _router = GoRouter(
+  routes: [
+    GoRoute(path: '/', builder: (context, state) => const Wheel()),
+    GoRoute(path: '/config', builder: (context, state) => const AppList()),
+  ],
+);
 
 void setupDependencies() {
   getIt.registerSingleton(DataRepo());
@@ -27,7 +37,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
+      routerConfig: _router,
       title: 'Stefan Launcher',
       theme: ThemeData(
         textSelectionTheme: TextSelectionThemeData(
@@ -37,7 +48,6 @@ class MyApp extends StatelessWidget {
         ),
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
       ),
-      home: const AppList(),
     );
   }
 }
