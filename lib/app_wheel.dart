@@ -108,7 +108,7 @@ class _WheelState extends State<Wheel> {
                   itemIndexInTheMiddle = scrollPixels / itemExtent;
 
                   // Calculate difference from the exact center
-                  difference = (itemIndexInTheMiddle - dataIndex).abs();
+                  difference = (itemIndexInTheMiddle - visualIndex).abs();
 
                   itemScale = (3 - difference / 2).clamp(0.5, 3.0);
                   itemOpacity = (1 - difference / 3).clamp(0.1, 1.0);
@@ -140,17 +140,21 @@ class _WheelState extends State<Wheel> {
                             "${itemData.app.appName}",
                             style: TextStyle(
                               fontSize: 18.0,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.lerp(
+                                FontWeight.w100,
+                                FontWeight.w900,
+                                1 - difference / 2,
+                              ),
                               color: Colors.white,
                             ),
                           ),
-                          Text(
-                            "${difference.toStringAsFixed(2)} ${itemScale.toStringAsFixed(2)}x",
-                            style: TextStyle(
-                              fontSize: 8.0,
-                              color: Colors.white30,
-                            ),
-                          ),
+                          // Text(
+                          //   "${difference.toStringAsFixed(2)} ${itemScale.toStringAsFixed(2)}x",
+                          //   style: TextStyle(
+                          //     fontSize: 8.0,
+                          //     color: Colors.white30,
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),
