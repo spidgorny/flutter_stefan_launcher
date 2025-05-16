@@ -53,6 +53,33 @@ class DataRepo with ChangeNotifier {
     if (json != null) {
       favorites = json.map((e) => MyAppInfo.fromJson(e)).toList();
     }
+    if (favorites.length < 2) {
+      favorites.add(
+        MyAppInfo(
+          app: AppInfo(packageName: 'whatsapp', appName: 'WhatsApp'),
+        ),
+      );
+      favorites.add(
+        MyAppInfo(
+          app: AppInfo(packageName: 'spotify', appName: 'Spotify'),
+        ),
+      );
+      favorites.add(
+        MyAppInfo(
+          app: AppInfo(packageName: 'camera', appName: 'Camera'),
+        ),
+      );
+      favorites.add(
+        MyAppInfo(
+          app: AppInfo(packageName: 'telegram', appName: 'Telegram'),
+        ),
+      );
+      favorites.add(
+        MyAppInfo(
+          app: AppInfo(packageName: 'tiktok', appName: 'TikTok'),
+        ),
+      );
+    }
     debugPrint('loadFav done');
   }
 
