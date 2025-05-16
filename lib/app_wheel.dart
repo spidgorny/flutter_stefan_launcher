@@ -1,5 +1,3 @@
-import 'dart:math' as Math;
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:watch_it/watch_it.dart';
@@ -35,6 +33,8 @@ class _WheelState extends State<Wheel> {
   Widget build(BuildContext context) {
     final dataRepo = watch(di<DataRepo>());
     var items = dataRepo.favorites;
+    final itemExtent = 100.0;
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: PreferredSize(
@@ -75,7 +75,7 @@ class _WheelState extends State<Wheel> {
             offAxisFraction: 0,
             // useMagnifier: true,
             // magnification: 1.0,
-            itemExtent: 50,
+            itemExtent: itemExtent,
             // overAndUnderCenterOpacity: 0.5,
             physics: FixedExtentScrollPhysics(),
             // renderChildrenOutsideViewport: true,
@@ -97,6 +97,7 @@ class _WheelState extends State<Wheel> {
                 // double itemAngle = 0.0; // Example for rotation
                 double difference = 0.0;
                 double scrollPixels = 0;
+                double itemIndexInTheMiddle = 0.0;
 
                 if (_scrollController.hasClients &&
                     _scrollController.position.haveDimensions) {
@@ -104,15 +105,13 @@ class _WheelState extends State<Wheel> {
                   double halfHeight =
                       _scrollController.position.viewportDimension / 2;
 
-                  // Calculate difference from the exact center
-                  difference = (halfHeight - scrollPixels).abs();
+                  itemIndexInTheMiddle = scrollPixels / itemExtent;
 
-                  itemScale = (difference * visualIndex).clamp(0.0, 2.0);
-                  itemOpacity = Math.max(
-                    0.3,
-                    1.0 - difference * 0.3,
-                  ).clamp(0.0, 1.0);
-                  // itemAngle = (normalizedCurrentItem - normalizedSelectedItem) * 0.1; // Small rotation
+                  // Calculate difference from the exact center
+                  difference = (itemIndexInTheMiddle - dataIndex).abs();
+
+                  itemScale = (3 - difference / 2).clamp(0.5, 3.0);
+                  itemOpacity = (1 - difference / 3).clamp(0.1, 1.0);
                 }
 
                 return Transform.scale(
@@ -122,24 +121,37 @@ class _WheelState extends State<Wheel> {
                     child: Container(
                       // This is the base item structure
                       alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors
-                            .primaries[visualIndex % Colors.primaries.length]
-                            .shade100, // Dynamic color example
-                        borderRadius: BorderRadius.circular(10.0),
-                        border: Border.all(
-                          color: Colors
-                              .primaries[visualIndex % Colors.primaries.length]
-                              .shade300,
-                          width: 1.0,
-                        ),
-                      ),
-                      child: Text(
-                        "${scrollPixels.toStringAsFixed(2)} ${difference.toStringAsFixed(2)} ${itemData.app.appName}",
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      // decoration: BoxDecoration(
+                      //   // color: Colors
+                      //   //     .primaries[visualIndex % Colors.primaries.length]
+                      //   //     .shade100, // Dynamic color example
+                      //   borderRadius: BorderRadius.circular(10.0),
+                      //   border: Border.all(
+                      //     // color: Colors
+                      //     //     .primaries[visualIndex % Colors.primaries.length]
+                      //     //     .shade300,
+                      //     width: 1.0,
+                      //   ),
+                      // ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "${itemData.app.appName}",
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            "${difference.toStringAsFixed(2)} ${itemScale.toStringAsFixed(2)}x",
+                            style: TextStyle(
+                              fontSize: 8.0,
+                              color: Colors.white30,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
