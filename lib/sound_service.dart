@@ -12,6 +12,9 @@ class SoundService {
   void init() async {
     await loadTickSound();
     scrollController.addListener(this.onScroll); // Add the listener
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initScrollPosition();
+    });
   }
 
   Future<void> loadTickSound() async {

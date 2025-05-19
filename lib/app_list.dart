@@ -1,8 +1,6 @@
 import 'package:appcheck/appcheck.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_stefan_launcher/main.dart';
-import 'package:flutter_stefan_launcher/sound_service.dart';
 import 'package:watch_it/watch_it.dart';
 
 import 'MyAppInfo.dart';
@@ -20,19 +18,16 @@ class _AppListState extends State<AppList> {
   final appCheck = AppCheck();
   List<AppInfo> applications = [];
   final TextEditingController _searchController = TextEditingController();
-  final SoundService soundService = getIt<SoundService>();
 
   @override
   void initState() {
     debugPrint('init state');
     super.initState();
     getApplications();
-    soundService.init();
   }
 
   @override
   void dispose() {
-    soundService.dispose(); // Dispose the controller
     _searchController.dispose();
     super.dispose();
   }
@@ -59,9 +54,6 @@ class _AppListState extends State<AppList> {
 
     setState(() {
       applications = apps ?? [];
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        soundService.initScrollPosition();
-      });
     });
   }
 
@@ -132,8 +124,6 @@ class _AppListState extends State<AppList> {
           ? const Center(child: CircularProgressIndicator())
           : SafeArea(
               child: ListView.builder(
-                controller:
-                    soundService.scrollController, // Attach the controller
                 padding: const EdgeInsets.all(16),
                 itemCount: dataRepo.favorites.length + nonFavApps.length,
                 itemBuilder: (context, index) {
@@ -149,43 +139,7 @@ class _AppListState extends State<AppList> {
                 },
               ),
             ),
-      bottomNavigationBar: Container(
-        padding: EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-        color: Colors.blueAccent,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            IconButton(
-              icon: Icon(Icons.phone, size: 48, color: Colors.white),
-              tooltip: 'phone',
-              onPressed: () {
-                appCheck.launchApp('com.google.android.dialer');
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.web, size: 48, color: Colors.white),
-              tooltip: 'web',
-              onPressed: () {
-                appCheck.launchApp('com.android.chrome');
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.photo, size: 48, color: Colors.white),
-              tooltip: 'photo',
-              onPressed: () {
-                appCheck.launchApp('com.google.android.apps.photos');
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.camera, size: 48, color: Colors.white),
-              tooltip: 'camera',
-              onPressed: () {
-                appCheck.launchApp('com.android.camera2');
-              },
-            ),
-          ],
-        ),
-      ),
+      // bottomNavigationBar: BottomButtons(appCheck: appCheck),
     );
   }
 }
