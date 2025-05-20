@@ -31,7 +31,15 @@ class ListItemForApp extends StatelessWidget {
               ? '${app.usageTime.toString().substring(0, 5)} h'
               : app.app.packageName,
         ),
-        trailing: app.isFav ? Icon(Icons.star, color: Colors.yellow) : null,
+        trailing: app.isFav
+            ? IconButton(
+                onPressed: () => toggleFavorite(app.app),
+                icon: Icon(Icons.star, color: Colors.yellow),
+              )
+            : IconButton(
+                onPressed: () => toggleFavorite(app.app),
+                icon: Icon(Icons.star_border, color: Colors.black54),
+              ),
         onTap: () => _launchApp(context, app.app),
         // onLongPress: () => _longPress(context, app),
         onLongPress: () async {

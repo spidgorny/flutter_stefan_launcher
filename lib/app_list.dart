@@ -95,7 +95,7 @@ class _AppListState extends State<AppList> {
             },
             cursorColor: Colors.black,
           ),
-          surfaceTintColor: Colors.white30,
+          // surfaceTintColor: Colors.white30,
           // backgroundColor: Colors.amber,
           foregroundColor: Colors.blueAccent,
           actions: [

@@ -45,40 +45,8 @@ class _WheelState extends State<Wheel> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppBar(
-          backgroundColor: Colors.transparent,
-          automaticallyImplyLeading: true,
-          surfaceTintColor: Colors.white30,
-          // backgroundColor: Colors.amber,
-          foregroundColor: Colors.blueAccent,
-          actions: [
-            IconButton(
-              icon: const Icon(
-                Icons.settings,
-              ), // Replace with your desired icon
-              onPressed: () {
-                GoRouter.of(context).push('/config');
-              },
-            ),
-
-            // FilledButton(
-            //   onPressed: () {
-            //     debugPrint("Fav len: ${dataRepo.favorites.length}");
-            //     dataRepo.loadFavorites();
-            //   },
-            //   child: Icon(Icons.settings),
-            // ),
-          ],
-        ),
-      ),
       body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 0, 0.0),
-            child: LiveTimeWidget(),
-          ),
           AnimatedBuilder(
             animation: _scrollController,
             builder: (BuildContext context, Widget? child) {
@@ -124,8 +92,8 @@ class _WheelState extends State<Wheel> {
                       // Calculate difference from the exact center
                       difference = (itemIndexInTheMiddle - visualIndex).abs();
 
-                      itemScale = (3 - difference / 2).clamp(0.5, 3.0);
-                      itemOpacity = (1 - difference / 10).clamp(0.1, 1.0);
+                      itemScale = (3 - difference / 3).clamp(0.5, 3.0);
+                      itemOpacity = (1 - difference / 5).clamp(0.1, 1.0);
                     }
 
                     return Transform.scale(
@@ -160,6 +128,14 @@ class _WheelState extends State<Wheel> {
                                     1 - difference / 2,
                                   ),
                                   color: Colors.white,
+                                  shadows: <Shadow>[
+                                    // Adding text shadow for better readability
+                                    Shadow(
+                                      offset: Offset(1.0, 1.0),
+                                      blurRadius: 10.0,
+                                      color: Color.fromARGB(150, 0, 0, 0),
+                                    ),
+                                  ],
                                 ),
                               ),
                               // Text(
@@ -179,6 +155,32 @@ class _WheelState extends State<Wheel> {
                 ),
               );
             },
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 0, 0.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  LiveTimeWidget(),
+                  IconButton(
+                    icon: const Icon(Icons.settings),
+                    onPressed: () {
+                      GoRouter.of(context).push('/config');
+                    },
+                  ),
+
+                  // FilledButton(
+                  //   onPressed: () {
+                  //     debugPrint("Fav len: ${dataRepo.favorites.length}");
+                  //     dataRepo.loadFavorites();
+                  //   },
+                  //   child: Icon(Icons.settings),
+                  // ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
