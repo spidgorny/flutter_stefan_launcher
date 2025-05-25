@@ -9,11 +9,13 @@ class SoundService {
   late int soundId;
   double _previousScrollOffset = 0.0;
 
-  void init() async {
+  void init(bool mounted) async {
     await loadTickSound();
-    scrollController.addListener(this.onScroll); // Add the listener
+    scrollController.addListener(onScroll); // Add the listener
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      initScrollPosition();
+      if (mounted) {
+        initScrollPosition();
+      }
     });
   }
 

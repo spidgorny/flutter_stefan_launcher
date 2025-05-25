@@ -42,9 +42,8 @@ class MyApp extends StatelessWidget {
       title: 'Stefan Launcher',
       theme: ThemeData(
         textSelectionTheme: TextSelectionThemeData(
-          selectionColor: Color(
-            0xFF3297FD,
-          ).withOpacity(0.5), // Choose your desired color and opacity
+          selectionColor: Color(0xFF3297FD),
+          // .withOpacity(0.5), // Choose your desired color and opacity
         ),
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
       ),

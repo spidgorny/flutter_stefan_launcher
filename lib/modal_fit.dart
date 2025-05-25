@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'MyAppInfo.dart';
+import 'my_app_info.dart';
 
 class ModalFit extends StatelessWidget {
   static const ADD_TO_FAVORITES = 'Add to Favorites';
@@ -16,7 +16,7 @@ class ModalFit extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              app.app.appName ?? app.app.packageName ?? '',
+              app.app.appName ?? app.app.packageName,
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
             app.isFav

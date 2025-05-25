@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:battery_plus/battery_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // For date formatting
 
@@ -16,6 +17,10 @@ class _LiveTimeWidgetState extends State<LiveTimeWidget> {
   Timer? _timer;
   // DateTime object to hold the current time
   DateTime _currentTime = DateTime.now();
+  var battery = Battery();
+  var batteryLevel = 0;
+  BatteryState batteryState = BatteryState.unknown;
+  StreamSubscription<BatteryState>? _batteryStateSubscription;
 
   @override
   void initState() {
@@ -31,6 +36,26 @@ class _LiveTimeWidgetState extends State<LiveTimeWidget> {
           _currentTime = DateTime.now();
         });
       }
+    });
+
+    initBatteryLevel();
+  }
+
+  void initBatteryLevel() async {
+    var level = await battery.batteryLevel;
+    debugPrint('Battery Level: $batteryLevel');
+    setState(() {
+      batteryLevel = level;
+    });
+    if (_batteryStateSubscription == null) {
+      return;
+    }
+    _batteryStateSubscription = battery.onBatteryStateChanged.listen((
+      BatteryState state,
+    ) {
+      setState(() {
+        batteryState = state;
+      });
     });
   }
 
@@ -82,6 +107,28 @@ class _LiveTimeWidgetState extends State<LiveTimeWidget> {
                 color: Color.fromARGB(150, 0, 0, 0),
               ),
             ],
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            initBatteryLevel();
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Row(
+              children: [
+                ?batteryState == BatteryState.charging
+                    ? Icon(Icons.power, color: Colors.white)
+                    : null,
+                Icon(Icons.battery_full, color: Colors.white),
+                ?batteryLevel > 0
+                    ? Text(
+                        '$batteryLevel%',
+                        style: TextStyle(color: Colors.white),
+                      )
+                    : null,
+              ],
+            ),
           ),
         ),
       ],

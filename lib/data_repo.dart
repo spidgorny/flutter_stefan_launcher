@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences_android/shared_preferences_android.dart';
 
-import 'MyAppInfo.dart';
+import 'my_app_info.dart';
 
 class DataRepo with ChangeNotifier {
   late final SharedPreferencesWithCache _asyncPrefs;
@@ -114,7 +114,7 @@ class DataRepo with ChangeNotifier {
       appUsageInfo = infoList;
       return infoList;
     } on Exception catch (exception) {
-      print(exception);
+      debugPrint(exception as String?);
       return [];
     }
   }

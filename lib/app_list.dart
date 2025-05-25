@@ -3,9 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
-import 'MyAppInfo.dart';
 import 'data_repo.dart';
-import 'list-item.dart';
+import 'list_item.dart';
+import 'my_app_info.dart';
 
 class AppList extends StatefulWidget with WatchItStatefulWidgetMixin {
   const AppList({super.key});

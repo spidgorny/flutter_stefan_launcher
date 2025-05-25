@@ -26,7 +26,7 @@ class _WheelState extends State<Wheel> {
   @override
   void initState() {
     super.initState();
-    soundService.init();
+    soundService.init(mounted);
     // This listener will call setState whenever the scroll position changes,
     // forcing the build method (and thus the ListWheelScrollView's delegate) to re-evaluate.
     _scrollController.addListener(() {
@@ -41,7 +41,7 @@ class _WheelState extends State<Wheel> {
   Widget build(BuildContext context) {
     final dataRepo = watch(di<DataRepo>());
     var items = dataRepo.favorites;
-    final itemExtent = 75.0;
+    final itemExtent = 50.0;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -84,8 +84,8 @@ class _WheelState extends State<Wheel> {
                     if (_scrollController.hasClients &&
                         _scrollController.position.haveDimensions) {
                       scrollPixels = _scrollController.position.pixels;
-                      double halfHeight =
-                          _scrollController.position.viewportDimension / 2;
+                      // double halfHeight =
+                      _scrollController.position.viewportDimension / 2;
 
                       itemIndexInTheMiddle = scrollPixels / itemExtent;
 
