@@ -7,7 +7,7 @@
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
     <application
-        android:label="flutter_stefan_launcher"
+        android:label="DETOXD"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

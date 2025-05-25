@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_stefan_launcher/app_wheel.dart';
-import 'package:flutter_stefan_launcher/data_repo.dart';
-import 'package:flutter_stefan_launcher/sound_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 // Import other platform implementations if you are targeting other platforms
 
 import 'app_list.dart';
+import 'app_wheel.dart';
+import 'data_repo.dart';
+import 'sound_service.dart';
 
 final getIt = GetIt.instance;
 

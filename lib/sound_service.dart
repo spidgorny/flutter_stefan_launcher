@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:soundplayer/soundplayer.dart';
 
 class SoundService {
@@ -11,7 +12,9 @@ class SoundService {
 
   void init(bool mounted) async {
     await loadTickSound();
-    scrollController.addListener(onScroll); // Add the listener
+    scrollController.addListener(
+      () => onScroll(scrollController),
+    ); // Add the listener
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         initScrollPosition();
@@ -31,7 +34,7 @@ class SoundService {
     scrollController.dispose(); // Dispose the controller
   }
 
-  void onScroll() {
+  void onScroll(ScrollController scrollController) {
     // Get the current scroll offset
     double currentScrollOffset = scrollController.offset;
 
@@ -42,10 +45,11 @@ class SoundService {
     if (scrollController.position.userScrollDirection != ScrollDirection.idle &&
         !scrollController.position.atEdge) {
       var diff = (currentScrollOffset - _previousScrollOffset).abs();
-      // debugPrint('diff: $diff');
-      if (diff > 75) {
+      debugPrint('diff: $diff');
+      if (diff > 50) {
         debugPrint('play');
         soundPlayer.play(soundId);
+        HapticFeedback.lightImpact();
         // Update the previous scroll offset for the next scroll event
         _previousScrollOffset = currentScrollOffset;
       }

@@ -1,6 +1,5 @@
 import 'package:appcheck/appcheck.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_stefan_launcher/sound_service.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:watch_it/watch_it.dart';
@@ -9,6 +8,7 @@ import 'bottom_buttons.dart';
 import 'clock.dart';
 import 'data_repo.dart';
 import 'main.dart';
+import 'sound_service.dart';
 
 class Wheel extends StatefulWidget with WatchItStatefulWidgetMixin {
   const Wheel({super.key});
@@ -20,6 +20,7 @@ class Wheel extends StatefulWidget with WatchItStatefulWidgetMixin {
 class _WheelState extends State<Wheel> {
   final FixedExtentScrollController _scrollController =
       FixedExtentScrollController();
+  final appCheck = AppCheck();
 
   final SoundService soundService = getIt<SoundService>();
 
@@ -33,7 +34,8 @@ class _WheelState extends State<Wheel> {
     _scrollController.addListener(() {
       if (mounted) {
         // Ensure the widget is still in the tree
-        setState(() {});
+        // setState(() {});
+        soundService.onScroll(_scrollController);
       }
     });
   }
@@ -110,12 +112,12 @@ class _WheelState extends State<Wheel> {
                     }
 
                     return Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.1),
-                          width: 1,
-                        ),
-                      ),
+                      // decoration: BoxDecoration(
+                      //   border: Border.all(
+                      //     color: Colors.white.withOpacity(0.1),
+                      //     width: 1,
+                      //   ),
+                      // ),
                       child: Transform.scale(
                         scale: itemScale,
                         child: Opacity(
@@ -135,34 +137,37 @@ class _WheelState extends State<Wheel> {
                             //     width: 1.0,
                             //   ),
                             // ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "${itemData.app.appName}",
-                                  style: GoogleFonts.inter(
-                                    fontSize: 15.0,
-                                    fontWeight: fontWeight,
-                                    color: Colors.white,
-                                    shadows: <Shadow>[
-                                      // Adding text shadow for better readability
-                                      Shadow(
-                                        offset: Offset(1.0, 1.0),
-                                        blurRadius: 10.0,
-                                        color: Color.fromARGB(150, 0, 0, 0),
-                                      ),
-                                    ],
+                            child: GestureDetector(
+                              onTap: () => _launchApp(context, itemData.app),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "${itemData.app.appName}",
+                                    style: GoogleFonts.inter(
+                                      fontSize: 15.0,
+                                      fontWeight: fontWeight,
+                                      color: Colors.white,
+                                      shadows: <Shadow>[
+                                        // Adding text shadow for better readability
+                                        Shadow(
+                                          offset: Offset(1.0, 1.0),
+                                          blurRadius: 10.0,
+                                          color: Color.fromARGB(150, 0, 0, 0),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                // Text(
-                                //   "${difference.toStringAsFixed(2)} ${itemScale.toStringAsFixed(2)}x",
-                                //   style: TextStyle(
-                                //     fontSize: 8.0,
-                                //     color: Colors.white30,
-                                //   ),
-                                // ),
-                              ],
+                                  // Text(
+                                  //   "${difference.toStringAsFixed(2)} ${itemScale.toStringAsFixed(2)}x",
+                                  //   style: TextStyle(
+                                  //     fontSize: 8.0,
+                                  //     color: Colors.white30,
+                                  //   ),
+                                  // ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -218,6 +223,19 @@ class _WheelState extends State<Wheel> {
       //     .toList(),
       bottomNavigationBar: BottomButtons(appCheck: AppCheck()),
     );
+  }
+
+  Future<void> _launchApp(BuildContext context, AppInfo app) async {
+    try {
+      await appCheck.launchApp(app.packageName);
+      debugPrint("${app.appName ?? app.packageName} launched!");
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("${app.appName ?? app.packageName} not found!")),
+      );
+      debugPrint("Error launching app: $e");
+    }
   }
 
   @override
