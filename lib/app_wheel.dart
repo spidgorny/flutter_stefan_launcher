@@ -2,6 +2,7 @@ import 'package:appcheck/appcheck.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stefan_launcher/sound_service.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:watch_it/watch_it.dart';
 
 import 'bottom_buttons.dart';
@@ -53,13 +54,17 @@ class _WheelState extends State<Wheel> {
               //         // This builder is called whenever _scrollController notifies listeners
               return ListWheelScrollView.useDelegate(
                 controller: _scrollController,
-                diameterRatio: 2.2,
+                diameterRatio: 50.0,
                 offAxisFraction: 0,
                 // useMagnifier: true,
                 // magnification: 1.0,
                 itemExtent: itemExtent,
                 // overAndUnderCenterOpacity: 0.5,
-                physics: FixedExtentScrollPhysics(),
+                physics: FixedExtentScrollPhysics(
+                  parent: BouncingScrollPhysics(
+                    decelerationRate: ScrollDecelerationRate.normal,
+                  ),
+                ),
                 // renderChildrenOutsideViewport: true,
                 // onSelectedItemChanged: (index) => {print(index)},
                 childDelegate: ListWheelChildBuilderDelegate(
@@ -80,6 +85,7 @@ class _WheelState extends State<Wheel> {
                     double difference = 0.0;
                     double scrollPixels = 0;
                     double itemIndexInTheMiddle = 0.0;
+                    FontWeight fontWeight = FontWeight.normal;
 
                     if (_scrollController.hasClients &&
                         _scrollController.position.haveDimensions) {
@@ -92,60 +98,72 @@ class _WheelState extends State<Wheel> {
                       // Calculate difference from the exact center
                       difference = (itemIndexInTheMiddle - visualIndex).abs();
 
-                      itemScale = (3 - difference / 3).clamp(0.5, 3.0);
-                      itemOpacity = (1 - difference / 5).clamp(0.1, 1.0);
+                      itemScale = (3 - difference / 4).clamp(1, 3.0);
+                      itemOpacity = (1 - difference / 5).clamp(0.0, 1.0);
+                      fontWeight =
+                          FontWeight.lerp(
+                            FontWeight.w400,
+                            FontWeight.w900,
+                            1 - difference / 5,
+                          ) ??
+                          FontWeight.normal;
                     }
 
-                    return Transform.scale(
-                      scale: itemScale,
-                      child: Opacity(
-                        opacity: itemOpacity,
-                        child: Container(
-                          // This is the base item structure
-                          alignment: Alignment.center,
-                          // decoration: BoxDecoration(
-                          //   // color: Colors
-                          //   //     .primaries[visualIndex % Colors.primaries.length]
-                          //   //     .shade100, // Dynamic color example
-                          //   borderRadius: BorderRadius.circular(10.0),
-                          //   border: Border.all(
-                          //     // color: Colors
-                          //     //     .primaries[visualIndex % Colors.primaries.length]
-                          //     //     .shade300,
-                          //     width: 1.0,
-                          //   ),
-                          // ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "${itemData.app.appName}",
-                                style: TextStyle(
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.lerp(
-                                    FontWeight.w100,
-                                    FontWeight.w900,
-                                    1 - difference / 2,
+                    return Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.1),
+                          width: 1,
+                        ),
+                      ),
+                      child: Transform.scale(
+                        scale: itemScale,
+                        child: Opacity(
+                          opacity: itemOpacity,
+                          child: Container(
+                            // This is the base item structure
+                            alignment: Alignment.center,
+                            // decoration: BoxDecoration(
+                            //   // color: Colors
+                            //   //     .primaries[visualIndex % Colors.primaries.length]
+                            //   //     .shade100, // Dynamic color example
+                            //   borderRadius: BorderRadius.circular(10.0),
+                            //   border: Border.all(
+                            //     // color: Colors
+                            //     //     .primaries[visualIndex % Colors.primaries.length]
+                            //     //     .shade300,
+                            //     width: 1.0,
+                            //   ),
+                            // ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "${itemData.app.appName}",
+                                  style: GoogleFonts.inter(
+                                    fontSize: 15.0,
+                                    fontWeight: fontWeight,
+                                    color: Colors.white,
+                                    shadows: <Shadow>[
+                                      // Adding text shadow for better readability
+                                      Shadow(
+                                        offset: Offset(1.0, 1.0),
+                                        blurRadius: 10.0,
+                                        color: Color.fromARGB(150, 0, 0, 0),
+                                      ),
+                                    ],
                                   ),
-                                  color: Colors.white,
-                                  shadows: <Shadow>[
-                                    // Adding text shadow for better readability
-                                    Shadow(
-                                      offset: Offset(1.0, 1.0),
-                                      blurRadius: 10.0,
-                                      color: Color.fromARGB(150, 0, 0, 0),
-                                    ),
-                                  ],
                                 ),
-                              ),
-                              // Text(
-                              //   "${difference.toStringAsFixed(2)} ${itemScale.toStringAsFixed(2)}x",
-                              //   style: TextStyle(
-                              //     fontSize: 8.0,
-                              //     color: Colors.white30,
-                              //   ),
-                              // ),
-                            ],
+                                // Text(
+                                //   "${difference.toStringAsFixed(2)} ${itemScale.toStringAsFixed(2)}x",
+                                //   style: TextStyle(
+                                //     fontSize: 8.0,
+                                //     color: Colors.white30,
+                                //   ),
+                                // ),
+                              ],
+                            ),
                           ),
                         ),
                       ),

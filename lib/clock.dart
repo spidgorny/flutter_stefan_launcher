@@ -70,7 +70,7 @@ class _LiveTimeWidgetState extends State<LiveTimeWidget> {
   @override
   Widget build(BuildContext context) {
     // Format the current time to HH:mm:ss using the intl package
-    String formattedTime = DateFormat('HH:mm:ss').format(_currentTime);
+    String formattedTime = DateFormat('HH:mm').format(_currentTime);
 
     // Display the formatted time in a Text widget
     return Column(
@@ -124,7 +124,17 @@ class _LiveTimeWidgetState extends State<LiveTimeWidget> {
                 ?batteryLevel > 0
                     ? Text(
                         '$batteryLevel%',
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(
+                          color: Colors.white,
+                          shadows: <Shadow>[
+                            // Adding text shadow for better readability
+                            Shadow(
+                              offset: Offset(2.0, 2.0),
+                              blurRadius: 5.0,
+                              color: Color.fromARGB(150, 0, 0, 0),
+                            ),
+                          ],
+                        ),
                       )
                     : null,
               ],
