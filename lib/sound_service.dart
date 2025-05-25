@@ -45,7 +45,7 @@ class SoundService {
     if (scrollController.position.userScrollDirection != ScrollDirection.idle &&
         !scrollController.position.atEdge) {
       var diff = (currentScrollOffset - _previousScrollOffset).abs();
-      debugPrint('diff: $diff');
+      // debugPrint('diff: $diff');
       if (diff > 50) {
         debugPrint('play');
         soundPlayer.play(soundId);
