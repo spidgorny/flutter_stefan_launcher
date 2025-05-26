@@ -5,20 +5,18 @@ import 'package:soundplayer/soundplayer.dart';
 
 class SoundService {
   final Soundplayer soundPlayer = Soundplayer(16, 1);
-  final ScrollController scrollController =
-      ScrollController(); // Declare ScrollController
   late int soundId;
   double _previousScrollOffset = 0.0;
 
-  void init(bool mounted) async {
+  void init(ScrollController scrollController) async {
     await loadTickSound();
     scrollController.addListener(
       () => onScroll(scrollController),
     ); // Add the listener
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        initScrollPosition();
-      }
+      // if (mounted) {
+      initScrollPosition(scrollController);
+      // }
     });
   }
 
@@ -31,7 +29,7 @@ class SoundService {
   }
 
   void dispose() {
-    scrollController.dispose(); // Dispose the controller
+    // scrollController.dispose(); // Dispose the controller
   }
 
   void onScroll(ScrollController scrollController) {
@@ -56,7 +54,7 @@ class SoundService {
     }
   }
 
-  void initScrollPosition() {
+  void initScrollPosition(ScrollController scrollController) {
     _previousScrollOffset = scrollController.offset;
   }
 }

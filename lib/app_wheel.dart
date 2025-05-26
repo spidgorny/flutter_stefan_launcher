@@ -28,7 +28,7 @@ class _WheelState extends State<Wheel> {
   @override
   void initState() {
     super.initState();
-    soundService.init(mounted);
+    soundService.init(_scrollController);
     // This listener will call setState whenever the scroll position changes,
     // forcing the build method (and thus the ListWheelScrollView's delegate) to re-evaluate.
     _scrollController.addListener(() {

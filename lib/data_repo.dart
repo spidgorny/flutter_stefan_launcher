@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:app_usage/app_usage.dart';
 import 'package:appcheck/appcheck.dart';
+import 'package:collection/collection.dart'; // Required for firstWhereOrNull
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences_android/shared_preferences_android.dart';
@@ -121,10 +122,12 @@ class DataRepo with ChangeNotifier {
 
   void injectUsageIntoAppList(List<AppUsageInfo> usage) {
     for (var app in favorites) {
-      var usageInfo = usage.firstWhere(
-        (element) => element.packageName == app.app.packageName,
+      AppUsageInfo? usageInfo = usage.firstWhereOrNull(
+        (element) => element.packageName == app.app.packageName, //allow null
       );
-      app.usageTime = usageInfo.usage;
+      if (usageInfo != null) {
+        app.usageTime = usageInfo.usage;
+      }
     }
   }
 }
