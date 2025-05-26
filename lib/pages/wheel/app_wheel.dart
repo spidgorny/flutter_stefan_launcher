@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../data/data_repo.dart';
+import '../../data/settings.dart';
 import '../../main.dart';
 import '../../service/sound_service.dart';
 import 'bottom_buttons.dart';
@@ -42,12 +43,14 @@ class _WheelState extends State<Wheel> {
 
   @override
   Widget build(BuildContext context) {
+    final settings = watch(di<Settings>());
     final dataRepo = watch(di<DataRepo>());
     var items = dataRepo.favorites;
     final itemExtent = 50.0;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      // backgroundColor: Colors.transparent,
+      backgroundColor: Colors.black,
       body: Stack(
         children: [
           AnimatedBuilder(
@@ -174,7 +177,9 @@ class _WheelState extends State<Wheel> {
                       ),
                     );
                   },
-                  childCount: items.length * 10,
+                  childCount: settings.isInfinityScroll
+                      ? items.length * 100
+                      : items.length,
                 ),
               );
             },

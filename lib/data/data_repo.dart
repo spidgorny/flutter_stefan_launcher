@@ -25,6 +25,7 @@ class DataRepo with ChangeNotifier {
     await loadFavorites();
     isLoading = false;
     notifyListeners();
+
     var usage = await getUsageStats();
     injectUsageIntoAppList(usage);
     notifyListeners();

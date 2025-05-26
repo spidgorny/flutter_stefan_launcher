@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'data/data_repo.dart';
 // Import other platform implementations if you are targeting other platforms
 
+import 'data/settings.dart';
 import 'pages/applist/app_list.dart';
 import 'service/sound_service.dart';
 
@@ -21,6 +22,7 @@ final _router = GoRouter(
 );
 
 void setupDependencies() {
+  getIt.registerSingleton(Settings());
   getIt.registerSingleton(DataRepo());
   getIt.registerSingleton(SoundService());
   // getIt.registerLazySingleton(() => ApiService());

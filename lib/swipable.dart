@@ -1,4 +1,4 @@
-import 'package:DETOXD/pages/applist/app_list.dart';
+import 'package:DETOXD/pages/settings/setting.dart';
 import 'package:DETOXD/pages/wheel/app_wheel.dart';
 import 'package:flutter/material.dart';
 
@@ -16,15 +16,18 @@ class _SwipeableScaffoldState extends State<SwipeableScaffold> {
   // Your different widgets to display
   final List<Widget> _pages = [
     Container(
-      color: Colors.red,
-      alignment: Alignment.center,
-      child: const Text(
-        'Widgets',
-        style: TextStyle(fontSize: 30, color: Colors.white),
+      color: Colors.white,
+      child: const Image(
+        image: AssetImage('assets/widgets-blur.png'),
+        fit: BoxFit.cover,
+        height: double.infinity,
+        width: double.infinity,
+        alignment: Alignment.center,
       ),
     ),
     Wheel(),
-    AppList(),
+    // AppList(),
+    SettingsPage(),
   ];
 
   @override
