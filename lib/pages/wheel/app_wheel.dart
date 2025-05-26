@@ -4,11 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:watch_it/watch_it.dart';
 
+import '../../data/data_repo.dart';
+import '../../main.dart';
+import '../../service/sound_service.dart';
 import 'bottom_buttons.dart';
 import 'clock.dart';
-import 'data_repo.dart';
-import 'main.dart';
-import 'sound_service.dart';
 
 class Wheel extends StatefulWidget with WatchItStatefulWidgetMixin {
   const Wheel({super.key});

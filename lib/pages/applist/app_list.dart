@@ -3,9 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
-import 'data_repo.dart';
+import '../../data/data_repo.dart';
+import '../../data/my_app_info.dart';
 import 'list_item.dart';
-import 'my_app_info.dart';
 
 class AppList extends StatefulWidget with WatchItStatefulWidgetMixin {
   const AppList({super.key});
@@ -63,7 +63,7 @@ class _AppListState extends State<AppList> {
     var nonFavApps = applications
         .where(
           (app) => !(dataRepo.favorites.any(
-            (x) => x.app.packageName == app.packageName,
+            (MyAppInfo x) => x.app.packageName == app.packageName,
           )),
         )
         .toList();

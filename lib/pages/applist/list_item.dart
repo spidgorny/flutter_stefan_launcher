@@ -2,8 +2,8 @@ import 'package:appcheck/appcheck.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
+import '../../data/my_app_info.dart';
 import 'modal_fit.dart';
-import 'my_app_info.dart';
 
 class ListItemForApp extends StatelessWidget {
   final MyAppInfo app;

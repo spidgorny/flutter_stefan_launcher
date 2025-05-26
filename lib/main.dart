@@ -1,21 +1,22 @@
+import 'package:DETOXD/swipable.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
+import 'data/data_repo.dart';
 // Import other platform implementations if you are targeting other platforms
 
-import 'app_list.dart';
-import 'app_wheel.dart';
-import 'data_repo.dart';
-import 'sound_service.dart';
+import 'pages/applist/app_list.dart';
+import 'service/sound_service.dart';
 
 final getIt = GetIt.instance;
 
 // GoRouter configuration
 final _router = GoRouter(
   routes: [
-    GoRoute(path: '/', builder: (context, state) => const Wheel()),
+    GoRoute(path: '/', builder: (context, state) => const SwipeableScaffold()),
     GoRoute(path: '/config', builder: (context, state) => const AppList()),
+    GoRoute(path: '/widgets', builder: (context, state) => const AppList()),
   ],
 );
 
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: _router,
-      title: 'Stefan Launcher',
+      title: 'DETOXD',
       theme: ThemeData(
         textSelectionTheme: TextSelectionThemeData(
           selectionColor: Color(0xFF3297FD),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'my_app_info.dart';
+import '../../data/my_app_info.dart';
 
 class ModalFit extends StatelessWidget {
   static const ADD_TO_FAVORITES = 'Add to Favorites';
