@@ -49,7 +49,7 @@ class _WheelState extends State<Wheel> {
 
     return Scaffold(
       // backgroundColor: Colors.transparent,
-      backgroundColor: Colors.black,
+      backgroundColor: settings.isDarkMode ? Colors.black : Colors.white,
       body: Stack(
         children: [
           SafeArea(
@@ -185,20 +185,22 @@ class _WheelState extends State<Wheel> {
                                           style: GoogleFonts.inter(
                                             fontSize: 15.0,
                                             fontWeight: fontWeight,
-                                            color: Colors.white,
-                                            shadows: <Shadow>[
-                                              // Adding text shadow for better readability
-                                              Shadow(
-                                                offset: Offset(1.0, 1.0),
-                                                blurRadius: 10.0,
-                                                color: Color.fromARGB(
-                                                  150,
-                                                  0,
-                                                  0,
-                                                  0,
-                                                ),
-                                              ),
-                                            ],
+                                            // color: Colors.white,
+                                            shadows: settings.isDarkMode
+                                                ? <Shadow>[
+                                                    // Adding text shadow for better readability
+                                                    Shadow(
+                                                      offset: Offset(1.0, 1.0),
+                                                      blurRadius: 10.0,
+                                                      color: Color.fromARGB(
+                                                        150,
+                                                        0,
+                                                        0,
+                                                        0,
+                                                      ),
+                                                    ),
+                                                  ]
+                                                : [],
                                           ),
                                         ),
                                         // Text(

@@ -15,28 +15,44 @@ class BottomButtons extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           IconButton(
-            icon: Icon(Icons.phone, size: 48, color: Colors.white),
+            icon: Icon(
+              Icons.phone,
+              size: 48,
+              // color: Colors.white
+            ),
             tooltip: 'phone',
             onPressed: () {
               appCheck.launchApp('com.google.android.dialer');
             },
           ),
           IconButton(
-            icon: Icon(Icons.web, size: 48, color: Colors.white),
+            icon: Icon(
+              Icons.web,
+              size: 48,
+              // color: Colors.white
+            ),
             tooltip: 'web',
             onPressed: () {
               appCheck.launchApp('com.android.chrome');
             },
           ),
           IconButton(
-            icon: Icon(Icons.photo, size: 48, color: Colors.white),
+            icon: Icon(
+              Icons.photo,
+              size: 48,
+              // color: Colors.white
+            ),
             tooltip: 'photo',
             onPressed: () {
               appCheck.launchApp('com.google.android.apps.photos');
             },
           ),
           IconButton(
-            icon: Icon(Icons.camera, size: 48, color: Colors.white),
+            icon: Icon(
+              Icons.camera,
+              size: 48,
+              // color: Colors.white
+            ),
             tooltip: 'camera',
             onPressed: () {
               appCheck.launchApp('com.android.camera2');

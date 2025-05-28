@@ -68,7 +68,7 @@ class ThemeNotifier extends ChangeNotifier {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    final settings = watch(di<Settings>());
+    // final settings = watch(di<Settings>());
     final themeNotifier = watch(di<ThemeNotifier>());
     return MaterialApp.router(
       routerConfig: _router,
