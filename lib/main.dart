@@ -48,8 +48,11 @@ class ThemeNotifier extends ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.light; // Default theme
   final settings = getIt<Settings>();
 
-  ThemeMode get themeMode =>
-      settings.isDarkMode ? ThemeMode.dark : ThemeMode.light;
+  ThemeMode get themeMode {
+    var isDarkMode = settings.isReady ? settings.isDarkMode : false;
+    return isDarkMode ? ThemeMode.dark : ThemeMode.light;
+  }
+
   bool get isDarkMode => _themeMode == ThemeMode.dark;
 
   // Method to toggle the theme
@@ -68,32 +71,45 @@ class ThemeNotifier extends ChangeNotifier {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    // final settings = watch(di<Settings>());
-    final themeNotifier = watch(di<ThemeNotifier>());
-    return MaterialApp.router(
-      routerConfig: _router,
-      title: 'DETOXD',
-      theme: ThemeData(
-        brightness: Brightness.light,
-        textSelectionTheme: TextSelectionThemeData(
-          selectionColor: Color(0xFF3297FD),
-          // .withOpacity(0.5), // Choose your desired color and opacity
+    final settings = watch(di<Settings>());
+    if (!settings.isReady) {
+      return const MaterialApp(
+        home: Scaffold(body: Center(child: CircularProgressIndicator())),
+      );
+    } else {
+      final themeNotifier = watch(di<ThemeNotifier>());
+      return MaterialApp.router(
+        routerConfig: _router,
+        title: 'DETOXD',
+        theme: ThemeData(
+          brightness: Brightness.light,
+          useMaterial3: true,
+          textTheme: TextTheme(
+            // bodyLarge: TextStyle(color: Colors.white),
+            // bodyMedium: TextStyle(color: Colors.white),
+            // Add other text styles as needed
+          ),
+          textSelectionTheme: TextSelectionThemeData(
+            selectionColor: Color(0xFF3297FD),
+            // .withOpacity(0.5), // Choose your desired color and opacity
+          ),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
         ),
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        textSelectionTheme: TextSelectionThemeData(
-          selectionColor: Color(
-            0xFF3297FD,
-          ).withOpacity(0.5), // Adjust for dark mode
-        ),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blueAccent,
+        darkTheme: ThemeData(
           brightness: Brightness.dark,
+          textSelectionTheme: TextSelectionThemeData(
+            selectionColor: Color(
+              0xFF3297FD,
+            ).withOpacity(0.5), // Adjust for dark mode
+          ),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.blueAccent,
+            brightness: Brightness.dark,
+          ),
         ),
-      ),
-      themeMode: themeNotifier.themeMode, // Or ThemeMode.light / ThemeMode.dark
-    );
+        themeMode:
+            themeNotifier.themeMode, // Or ThemeMode.light / ThemeMode.dark
+      );
+    }
   }
 }

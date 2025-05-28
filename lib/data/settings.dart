@@ -4,6 +4,7 @@ import 'package:shared_preferences_android/shared_preferences_android.dart';
 
 class Settings with ChangeNotifier {
   late final SharedPreferencesWithCache _asyncPrefs;
+  bool isReady = false;
 
   Settings() {
     debugPrint('Settings init');
@@ -12,6 +13,7 @@ class Settings with ChangeNotifier {
 
   Future<void> init() async {
     await initSharedPrefs();
+    isReady = true;
   }
 
   Future<void> initSharedPrefs() async {
