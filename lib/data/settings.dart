@@ -32,4 +32,10 @@ class Settings with ChangeNotifier {
   bool get isInfinityScroll => _asyncPrefs.getBool('isInfinityScroll') ?? false;
   set isInfinityScroll(bool value) =>
       _asyncPrefs.setBool('isInfinityScroll', value);
+
+  bool get isDarkMode => _asyncPrefs.getBool('isDarkMode') ?? false;
+  set isDarkMode(bool value) => _asyncPrefs.setBool('isDarkMode', value);
+
+  bool get isStatusBar => _asyncPrefs.getBool('isStatusBar') ?? false;
+  set isStatusBar(bool value) => _asyncPrefs.setBool('isStatusBar', value);
 }

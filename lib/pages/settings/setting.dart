@@ -3,6 +3,7 @@ import 'package:settings_ui/settings_ui.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../data/settings.dart';
+import '../../main.dart';
 
 class SettingsPage extends StatefulWidget with WatchItStatefulWidgetMixin {
   const SettingsPage({super.key});
@@ -17,6 +18,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final settings = watch(di<Settings>());
+    final themeNotifier = watch(di<ThemeNotifier>());
     return Scaffold(
       appBar: AppBar(title: Text('Settings')),
       body: SettingsList(
@@ -42,7 +44,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 initialValue: settings.isInfinityScroll,
                 onToggle: (value) {
                   setState(() {
-                    settings.isInfinityScroll = (value);
+                    settings.isInfinityScroll = value;
                   });
                 },
                 title: Text('Infinity scroll'),
@@ -52,9 +54,13 @@ class _SettingsPageState extends State<SettingsPage> {
           SettingsSection(
             title: Text('Design'),
             tiles: [
-              SettingsTile(
-                title: Text('Conservations'),
-                description: Text('No priority conservations'),
+              SettingsTile.switchTile(
+                initialValue: settings.isDarkMode,
+                onToggle: (value) {
+                  settings.isDarkMode = value;
+                  themeNotifier.toggleTheme(!themeNotifier.isDarkMode);
+                },
+                title: Text('Dark Mode'),
               ),
               SettingsTile(
                 title: Text('Bubbles'),
