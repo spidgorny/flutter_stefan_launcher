@@ -68,7 +68,7 @@ class DataRepo with ChangeNotifier {
       );
       favorites.add(
         MyAppInfo(
-          app: AppInfo(packageName: 'camera', appName: 'Camera'),
+          app: AppInfo(packageName: 'com.android.camera2', appName: 'Camera'),
         ),
       );
       favorites.add(

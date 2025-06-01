@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -39,6 +40,9 @@ class _SettingsPageState extends State<SettingsPage> {
               SettingsTile(
                 title: Text('Edit favorites'),
                 trailing: Icon(Icons.star),
+                onPressed: (BuildContext context) => {
+                  GoRouter.of(context).push('/config'),
+                },
               ),
               SettingsTile.switchTile(
                 initialValue: settings.isInfinityScroll,

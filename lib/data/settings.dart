@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences_android/shared_preferences_android.dart';
 
 class Settings with ChangeNotifier {
-  late final SharedPreferencesWithCache _asyncPrefs;
+  SharedPreferencesWithCache? _asyncPrefs;
   bool isReady = false;
 
   Settings() {
@@ -17,6 +17,7 @@ class Settings with ChangeNotifier {
   }
 
   Future<void> initSharedPrefs() async {
+    if (_asyncPrefs != null) return;
     const SharedPreferencesAsyncAndroidOptions options =
         SharedPreferencesAsyncAndroidOptions(
           backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
@@ -31,13 +32,14 @@ class Settings with ChangeNotifier {
     debugPrint('Settings init shared prefs done');
   }
 
-  bool get isInfinityScroll => _asyncPrefs.getBool('isInfinityScroll') ?? false;
+  bool get isInfinityScroll =>
+      _asyncPrefs?.getBool('isInfinityScroll') ?? false;
   set isInfinityScroll(bool value) =>
-      _asyncPrefs.setBool('isInfinityScroll', value);
+      _asyncPrefs?.setBool('isInfinityScroll', value);
 
-  bool get isDarkMode => _asyncPrefs.getBool('isDarkMode') ?? false;
-  set isDarkMode(bool value) => _asyncPrefs.setBool('isDarkMode', value);
+  bool get isDarkMode => _asyncPrefs?.getBool('isDarkMode') ?? false;
+  set isDarkMode(bool value) => _asyncPrefs?.setBool('isDarkMode', value);
 
-  bool get isStatusBar => _asyncPrefs.getBool('isStatusBar') ?? false;
-  set isStatusBar(bool value) => _asyncPrefs.setBool('isStatusBar', value);
+  bool get isStatusBar => _asyncPrefs?.getBool('isStatusBar') ?? false;
+  set isStatusBar(bool value) => _asyncPrefs?.setBool('isStatusBar', value);
 }

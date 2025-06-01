@@ -17,14 +17,14 @@ class ListItemForApp extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: ListTile(
         title: Text(app.app.appName ?? app.app.packageName),
-        // textColor: Colors.white,
-        titleTextStyle: TextStyle(color: Colors.black),
-        subtitleTextStyle: TextStyle(color: Colors.black38),
+        textColor: app.isFav ? Colors.black : null,
+        // titleTextStyle: TextStyle(color: Colors.black),
+        // subtitleTextStyle: TextStyle(color: Colors.black38),
         shape: RoundedRectangleBorder(
-          side: BorderSide(color: Colors.grey.shade300, width: 0.5),
+          side: BorderSide(color: Colors.blueGrey, width: 0.5),
           borderRadius: BorderRadius.circular(10),
         ),
-        tileColor: Colors.white54,
+        tileColor: app.isFav ? Colors.lightBlue.shade100 : null,
         leading: app.app.icon != null ? Image.memory(app.app.icon!) : null,
         subtitle: Text(
           app.usageTime != null
@@ -40,7 +40,8 @@ class ListItemForApp extends StatelessWidget {
                 onPressed: () => toggleFavorite(app.app),
                 icon: Icon(Icons.star_border, color: Colors.black54),
               ),
-        onTap: () => _launchApp(context, app.app),
+        onTap: () => toggleFavorite(app.app),
+        // onTap: () => _launchApp(context, app.app),
         // onLongPress: () => _longPress(context, app),
         onLongPress: () async {
           String action = await showMaterialModalBottomSheet(

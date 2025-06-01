@@ -8,6 +8,7 @@ import 'data/data_repo.dart';
 
 import 'data/settings.dart';
 import 'pages/applist/app_list.dart';
+import 'pages/settings/settings_page.dart';
 import 'service/sound_service.dart';
 
 final getIt = GetIt.instance;
@@ -16,8 +17,12 @@ final getIt = GetIt.instance;
 final _router = GoRouter(
   routes: [
     GoRoute(path: '/', builder: (context, state) => const SwipeableScaffold()),
+    GoRoute(
+      path: '/settings',
+      builder: (context, state) => const SettingsPage(),
+    ),
     GoRoute(path: '/config', builder: (context, state) => const AppList()),
-    GoRoute(path: '/widgets', builder: (context, state) => const AppList()),
+    GoRoute(path: '/widgets', builder: (context, state) => const WidgetsPage()),
   ],
 );
 
@@ -30,9 +35,11 @@ void setupDependencies() {
   // getIt.registerFactory(() => DataRepository(apiService: getIt<ApiService>()));
 }
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setupDependencies();
+  var settings = getIt<Settings>();
+  await settings.init();
   runApp(const MyApp());
 }
 
