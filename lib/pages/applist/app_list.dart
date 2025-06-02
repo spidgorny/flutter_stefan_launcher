@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:appcheck/appcheck.dart';
-import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart' as foundation;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../data/data_repo.dart';
@@ -17,7 +19,7 @@ class AppList extends StatefulWidget with WatchItStatefulWidgetMixin {
 }
 
 class _AppListState extends State<AppList> {
-  final startTime = DateTime.now();
+  var startTime = DateTime.now();
   List<AppInfo> applications = [];
   final TextEditingController _searchController = TextEditingController();
   bool isLoading = true;
@@ -264,12 +266,13 @@ class _AppListState extends State<AppList> {
 
   debugPrintX(String message) {
     debugPrint('${DateTime.now().difference(startTime)} $message');
+    startTime = DateTime.now();
   }
 
   @override
   void initState() {
     debugPrintX('init state');
-    super.initState();
+    super.initState(); // Call super.initState() first
     getApplications();
     debugPrintX('init state done');
   }
@@ -281,51 +284,69 @@ class _AppListState extends State<AppList> {
   }
 
   Future<void> getApplications() async {
-    debugPrintX('getInstalledApps');
-    final appCheck = AppCheck();
-    var apps = await appCheck.getInstalledApps();
-    debugPrintX('installed apps: ${apps?.length}');
-    if (apps == null) {
+    // Run the app fetching and processing in a separate isolate
+    await compute(_fetchAndProcessApps, {
+      'rootIsolateToken': RootIsolateToken.instance!,
+      // 'apps': apps,
+      'blackList': _largePackageBlacklist,
+    }).then((processedApps) {
       setState(() {
-        applications = apps ?? [];
+        applications = processedApps;
         isLoading = false;
       });
-      return;
+    });
+  }
+
+  // This function will be executed in a separate isolate
+  static Future<List<AppInfo>> _fetchAndProcessApps(
+    Map<String, dynamic> args,
+  ) async {
+    RootIsolateToken rootIsolateToken = args['rootIsolateToken'];
+    BackgroundIsolateBinaryMessenger.ensureInitialized(rootIsolateToken);
+    final appCheck = AppCheck();
+    var apps = await appCheck.getInstalledApps();
+    // List<AppInfo>? apps = args['apps'];
+    List<String> blacklist = args['blackList'];
+    // debugPrintX is not available in isolate, use debugPrint directly if needed
+    debugPrint('Isolate: getInstalledApps');
+    debugPrint('Isolate: installed apps: ${apps?.length}');
+
+    if (apps == null || apps.isEmpty) {
+      return [];
     }
 
-    // removes too manu useful apps
-    // apps = apps?.where((app) => !(app.isSystemApp ?? false)).toList();
-    final badIconApp = apps.firstWhere(
-      (AppInfo app) => app.packageName == 'com.android.htmlviewer',
-    );
+    // Find the badIconApp within the isolate if necessary, or pass its details
+    AppInfo? badIconApp;
+    try {
+      badIconApp = apps.firstWhere(
+        (AppInfo app) => app.packageName == 'com.android.htmlviewer',
+      );
+    } catch (e) {
+      // Handle case where badIconApp is not found, if necessary
+      debugPrint('Isolate: com.android.htmlviewer not found.');
+    }
 
     apps = apps.where((AppInfo app) {
-      bool isOK = !(_largePackageBlacklist.any(
+      bool isBlacklisted = blacklist.any(
         (String x) => app.packageName.startsWith(x),
-      ));
-      if (!isOK) {
+      );
+      if (isBlacklisted) return false;
+
+      if (badIconApp != null &&
+          app.icon != null &&
+          badIconApp.icon != null &&
+          foundation.listEquals(app.icon, badIconApp.icon)) {
         return false;
       }
-
-      if (badIconApp.icon!.equals(app.icon as List<int>)) {
-        return false;
-      }
-
-      debugPrint('${app.packageName}: ${app.appName}');
-      return isOK;
+      return true;
     }).toList();
+
     apps.sort(
-      (a, b) => a.appName!.toLowerCase().compareTo(b.appName!.toLowerCase()),
+      (a, b) => (a.appName ?? "").toLowerCase().compareTo(
+        (b.appName ?? "").toLowerCase(),
+      ),
     );
-
-    // if (!kIsWeb && !kDebugMode) {
-    //   await Future.delayed(const Duration(seconds: 2));
-    // }
-
-    setState(() {
-      applications = apps ?? [];
-      isLoading = false;
-    });
+    return apps;
   }
 
   @override
