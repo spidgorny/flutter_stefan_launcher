@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:DETOXD/data/settings.dart';
+import 'package:DETOXD/main.dart';
 import 'package:app_usage/app_usage.dart';
 import 'package:appcheck/appcheck.dart';
 import 'package:collection/collection.dart'; // Required for firstWhereOrNull
@@ -26,9 +28,12 @@ class DataRepo with ChangeNotifier {
     isLoading = false;
     notifyListeners();
 
-    var usage = await getUsageStats();
-    injectUsageIntoAppList(usage);
-    notifyListeners();
+    var settings = getIt<Settings>();
+    if (settings.isAppUsageEnabled) {
+      var usage = await getUsageStats();
+      injectUsageIntoAppList(usage);
+      notifyListeners();
+    }
   }
 
   Future<void> initSharedPrefs() async {

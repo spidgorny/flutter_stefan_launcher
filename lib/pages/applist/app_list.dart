@@ -285,7 +285,7 @@ class _AppListState extends State<AppList> {
 
   Future<void> getApplications() async {
     // Run the app fetching and processing in a separate isolate
-    await compute(_fetchAndProcessApps, {
+    compute(_fetchAndProcessApps, {
       'rootIsolateToken': RootIsolateToken.instance!,
       // 'apps': apps,
       'blackList': _largePackageBlacklist,

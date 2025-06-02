@@ -42,4 +42,9 @@ class Settings with ChangeNotifier {
 
   bool get isStatusBar => _asyncPrefs?.getBool('isStatusBar') ?? false;
   set isStatusBar(bool value) => _asyncPrefs?.setBool('isStatusBar', value);
+
+  bool get isAppUsageEnabled =>
+      _asyncPrefs?.getBool('isAppUsageEnabled') ?? false;
+  set isAppUsageEnabled(bool value) =>
+      _asyncPrefs?.setBool('isAppUsageEnabled', value);
 }
