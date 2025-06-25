@@ -11,7 +11,7 @@ class SwipeableScaffold extends StatefulWidget {
 
 class _SwipeableScaffoldState extends State<SwipeableScaffold> {
   final PageController _pageController = PageController(initialPage: 1);
-  int _currentPageIndex = 1;
+  // int _currentPageIndex = 1;
 
   // Your different widgets to display
   final List<Widget> _pages = [
@@ -62,7 +62,7 @@ class _SwipeableScaffoldState extends State<SwipeableScaffold> {
         children: _pages,
         onPageChanged: (int index) {
           setState(() {
-            _currentPageIndex = index;
+            // _currentPageIndex = index;
           });
         },
         // physics: const BouncingScrollPhysics(), // Optional: customize scroll physics

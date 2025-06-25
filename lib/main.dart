@@ -1,3 +1,4 @@
+import 'package:DETOXD/service/app_list_service.dart';
 import 'package:DETOXD/swipable.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -31,6 +32,7 @@ void setupDependencies() {
   getIt.registerSingleton(DataRepo());
   getIt.registerSingleton(SoundService());
   getIt.registerSingleton(ThemeNotifier());
+  getIt.registerSingleton(AppListService());
   // getIt.registerLazySingleton(() => ApiService());
   // getIt.registerFactory(() => DataRepository(apiService: getIt<ApiService>()));
 }
