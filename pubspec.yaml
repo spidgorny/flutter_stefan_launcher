@@ -53,6 +53,7 @@ dependencies:
   settings_ui: ^2.0.2
   provider: ^6.1.5
   flutter_launcher_icons: ^0.14.3
+  r_nav_n_sheet: ^1.1.0
 
 dev_dependencies:
   flutter_test:

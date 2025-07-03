@@ -1,10 +1,11 @@
 import 'package:DETOXD/pages/wheel/scrollable_favorites_wheel.dart';
 import 'package:appcheck/appcheck.dart';
 import 'package:flutter/material.dart';
+import 'package:r_nav_n_sheet/r_nav_n_sheet.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../data/settings.dart';
-import 'bottom_buttons.dart';
+import 'app_grid_sheet.dart';
 import 'clock.dart';
 
 class Wheel extends StatefulWidget with WatchItStatefulWidgetMixin {
@@ -15,6 +16,8 @@ class Wheel extends StatefulWidget with WatchItStatefulWidgetMixin {
 }
 
 class _WheelState extends State<Wheel> {
+  AppCheck appCheck = AppCheck();
+
   @override
   Widget build(BuildContext context) {
     final settings = watch(di<Settings>());
@@ -81,7 +84,26 @@ class _WheelState extends State<Wheel> {
           //     return Column(children: [ColoredBox(color: Colors.white10)]);
           //   },
           // ),
-          BottomButtons(appCheck: AppCheck()),
+          // BottomButtons(appCheck: AppCheck()),
+          RNavNSheet(
+            sheet: AppGridSheet(),
+            items: [
+              const RNavItem(icon: Icons.phone, label: "Home"),
+              const RNavItem(icon: Icons.web, label: "Search"),
+              const RNavItem(icon: Icons.photo, label: "Cart"),
+              const RNavItem(icon: Icons.camera, label: "Account"),
+            ],
+            onTap: (int index) {
+              debugPrint("$index tapped");
+              var appsByIndex = [
+                'com.google.android.dialer',
+                'com.android.chrome',
+                'com.google.android.apps.photos',
+                'com.android.camera2',
+              ];
+              appCheck.launchApp(appsByIndex[index]);
+            },
+          ),
     );
   }
 }
