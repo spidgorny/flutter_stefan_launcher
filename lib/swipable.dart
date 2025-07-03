@@ -1,3 +1,4 @@
+import 'package:DETOXD/pages/all_apps_launcher.dart';
 import 'package:DETOXD/pages/settings/settings_page.dart';
 import 'package:DETOXD/pages/wheel/app_wheel.dart';
 import 'package:flutter/material.dart';
@@ -15,10 +16,10 @@ class _SwipeableScaffoldState extends State<SwipeableScaffold> {
 
   // Your different widgets to display
   final List<Widget> _pages = [
-    WidgetsPage(),
+    SettingsPage(),
     Wheel(),
     // AppList(),
-    SettingsPage(),
+    AllAppsLauncher(),
   ];
 
   @override
@@ -82,24 +83,6 @@ class _SwipeableScaffoldState extends State<SwipeableScaffold> {
       //     BottomNavigationBarItem(icon: Icon(Icons.looks_3), label: 'Page 3'),
       //   ],
       // ),
-    );
-  }
-}
-
-class WidgetsPage extends StatelessWidget {
-  const WidgetsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: const Image(
-        image: AssetImage('assets/widgets-blur.png'),
-        fit: BoxFit.cover,
-        height: double.infinity,
-        width: double.infinity,
-        alignment: Alignment.center,
-      ),
     );
   }
 }

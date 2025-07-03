@@ -1,3 +1,4 @@
+import 'package:DETOXD/pages/all_apps_launcher.dart';
 import 'package:DETOXD/service/app_list_service.dart';
 import 'package:DETOXD/swipable.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,10 @@ final _router = GoRouter(
       builder: (context, state) => const SettingsPage(),
     ),
     GoRoute(path: '/config', builder: (context, state) => const AppList()),
-    GoRoute(path: '/widgets', builder: (context, state) => const WidgetsPage()),
+    GoRoute(
+      path: '/widgets',
+      builder: (context, state) => const AllAppsLauncher(),
+    ),
   ],
 );
 
