@@ -76,54 +76,6 @@ class _AllAppsLauncherState extends State<AllAppsLauncher> {
           // surfaceTintColor: Colors.white30,
           // backgroundColor: Colors.amber,
           foregroundColor: Colors.blueAccent,
-
-          actions: [
-            PopupMenuButton<String>(
-              onSelected: (String result) {
-                // Handle the selected item
-                if (result == 'debug-usage-info') {
-                  for (var info in dataRepo.appUsageInfo) {
-                    debugPrintX(info.toString());
-                  }
-                }
-                if (result == 'refresh') {
-                  appListService.getApplications();
-                }
-                // Add more cases for other menu items if needed
-              },
-              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                const PopupMenuItem<String>(
-                  value: 'debug-usage-info',
-                  child: Row(
-                    children: [
-                      Icon(Icons.settings), // Added color to the icon
-                      SizedBox(width: 8), // Added spacing
-                      Text('Debug Usage Info'),
-                    ],
-                  ),
-                ),
-                const PopupMenuItem<String>(
-                  value: 'refresh',
-                  child: Row(
-                    children: [
-                      Icon(Icons.refresh), // Added color to the icon
-                      SizedBox(width: 8), // Added spacing
-                      Text('Refresh App List'),
-                    ],
-                  ),
-                ),
-                // Add more PopupMenuItem for other options
-              ],
-              icon: const Icon(Icons.more_vert), // Three dots icon
-            ),
-            // FilledButton(
-            //   onPressed: () {
-            //     debugPrint("Fav len: ${dataRepo.favorites.length}");
-            //     dataRepo.loadFavorites();
-            //   },
-            //   child: const Icon(Icons.settings),
-            // ),
-          ],
         ),
       ),
       body: dataRepo.isLoading || appListService.isLoading
