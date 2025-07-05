@@ -96,15 +96,36 @@ class _ScrollableFavoritesWheelState extends State<ScrollableFavoritesWheel> {
                 // Calculate difference from the exact center
                 difference = (itemIndexInTheMiddle - visualIndex).abs();
 
-                itemScale = (3 - difference / 4).clamp(1, 3.0);
+                itemScale = (3 - difference / 3.5).clamp(1, 3.0);
                 itemOpacity = (1 - difference / 5).clamp(0.0, 1.0);
+
+                var fontWeightMap = [
+                  FontWeight.w700,
+                  FontWeight.w600,
+                  FontWeight.w500,
+                  FontWeight.w400,
+                  FontWeight.w400,
+                  FontWeight.w400,
+                  FontWeight.w400,
+                  FontWeight.w400,
+                  FontWeight.w400,
+                  FontWeight.w400,
+                  FontWeight.w400,
+                  FontWeight.w400,
+                ];
+
                 fontWeight =
-                    FontWeight.lerp(
-                      FontWeight.w400,
-                      FontWeight.w900,
-                      1 - difference / 5,
-                    ) ??
-                    FontWeight.normal;
+                    fontWeightMap[(difference * 2).round() %
+                        fontWeightMap.length];
+                if (fontWeight == null) fontWeight = FontWeight.normal;
+
+                // fontWeight =
+                //     FontWeight.lerp(
+                //       FontWeight.w100,
+                //       FontWeight.w900,
+                //       1 - difference / 5,
+                //     ) ??
+                //     FontWeight.normal;
               }
 
               return Container(
@@ -140,11 +161,14 @@ class _ScrollableFavoritesWheelState extends State<ScrollableFavoritesWheel> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "${itemData.app.appName}",
+                              // (${difference.toStringAsFixed(2)})
+                              "${itemData.app.appName}  (${fontWeight.toString().substring(12, 15)})",
                               style: GoogleFonts.inter(
                                 fontSize: 15.0,
                                 fontWeight: fontWeight,
-                                // color: Colors.white,
+                                color: settings.isDarkMode
+                                    ? Colors.white
+                                    : Colors.black,
                                 shadows: settings.isDarkMode
                                     ? <Shadow>[
                                         // Adding text shadow for better readability
