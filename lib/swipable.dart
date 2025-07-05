@@ -8,6 +8,10 @@ class SwipeableScaffold extends StatefulWidget {
 
   @override
   State<SwipeableScaffold> createState() => _SwipeableScaffoldState();
+
+  static _SwipeableScaffoldState? of(BuildContext context) {
+    return context.findAncestorStateOfType<_SwipeableScaffoldState>();
+  }
 }
 
 class _SwipeableScaffoldState extends State<SwipeableScaffold> {
@@ -26,6 +30,14 @@ class _SwipeableScaffoldState extends State<SwipeableScaffold> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  scrollBackToCenter() {
+    _pageController.animateToPage(
+      1,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override

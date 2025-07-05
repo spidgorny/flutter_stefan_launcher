@@ -2,6 +2,7 @@ import 'package:appcheck/appcheck.dart';
 import 'package:flutter/material.dart';
 
 import '../../data/my_app_info.dart';
+import '../../data/platform_service.dart';
 
 class ModalFit extends StatelessWidget {
   static const ADD_TO_FAVORITES = 'Add to Favorites';
@@ -40,9 +41,13 @@ class ModalFit extends StatelessWidget {
                     onTap: () => Navigator.of(context).pop(ADD_TO_FAVORITES),
                   ),
             ListTile(
-              title: Text('Uninstall (TDB)'),
-              leading: Icon(Icons.delete),
-              onTap: () => Navigator.of(context).pop(),
+              title: Text('App Info'),
+              leading: Icon(Icons.info),
+              onTap: () {
+                var service = MyPlatformService();
+                service.openAppInfo(app.app.packageName);
+                Navigator.of(context).pop();
+              },
             ),
           ],
         ),
