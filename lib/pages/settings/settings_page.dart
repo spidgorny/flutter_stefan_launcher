@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../data/settings.dart';
@@ -35,6 +36,14 @@ class _SettingsPageState extends State<SettingsPage> {
               SettingsTile(
                 title: Text('Share DETOXD (please)'),
                 trailing: Icon(Icons.share),
+                onPressed: (BuildContext context) {
+                  SharePlus.instance.share(
+                    ShareParams(
+                      text: 'https://playstore.google.com',
+                      subject: 'Awesome app',
+                    ),
+                  );
+                },
               ),
               // SettingsTile(
               //   title: Text('Edit favorites'),
