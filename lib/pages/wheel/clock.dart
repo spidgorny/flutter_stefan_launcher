@@ -79,7 +79,7 @@ class _LiveTimeWidgetState extends State<LiveTimeWidget> {
     // Display the formatted time in a Text widget
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
           formattedTime,
@@ -132,7 +132,7 @@ class _LiveTimeWidgetState extends State<LiveTimeWidget> {
                       )
                     : null,
                 Icon(
-                  Icons.battery_full,
+                  Icons.battery_4_bar_sharp,
                   // color: Colors.white
                 ),
                 ?batteryLevel > 0

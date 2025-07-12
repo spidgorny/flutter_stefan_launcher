@@ -98,34 +98,33 @@ class _ScrollableFavoritesWheelState extends State<ScrollableFavoritesWheel> {
 
                 itemScale = (3 - difference / 3.5).clamp(1, 3.0);
                 itemOpacity = (1 - difference / 5).clamp(0.0, 1.0);
-
-                var fontWeightMap = [
-                  FontWeight.w700,
-                  FontWeight.w600,
-                  FontWeight.w500,
-                  FontWeight.w400,
-                  FontWeight.w400,
-                  FontWeight.w400,
-                  FontWeight.w400,
-                  FontWeight.w400,
-                  FontWeight.w400,
-                  FontWeight.w400,
-                  FontWeight.w400,
-                  FontWeight.w400,
-                ];
+                //
+                // var fontWeightMap = [
+                //   FontWeight.w700,
+                //   FontWeight.w600,
+                //   FontWeight.w500,
+                //   FontWeight.w400,
+                //   FontWeight.w400,
+                //   FontWeight.w400,
+                //   FontWeight.w400,
+                //   FontWeight.w400,
+                //   FontWeight.w400,
+                //   FontWeight.w400,
+                //   FontWeight.w400,
+                //   FontWeight.w400,
+                // ];
+                //
+                // fontWeight =
+                //     fontWeightMap[(difference * 2).round() %
+                //         fontWeightMap.length];
 
                 fontWeight =
-                    fontWeightMap[(difference * 2).round() %
-                        fontWeightMap.length];
-                if (fontWeight == null) fontWeight = FontWeight.normal;
-
-                // fontWeight =
-                //     FontWeight.lerp(
-                //       FontWeight.w100,
-                //       FontWeight.w900,
-                //       1 - difference / 5,
-                //     ) ??
-                //     FontWeight.normal;
+                    FontWeight.lerp(
+                      FontWeight.w100,
+                      FontWeight.w900,
+                      1 - difference / 5,
+                    ) ??
+                    FontWeight.normal;
               }
 
               return Container(
@@ -136,12 +135,14 @@ class _ScrollableFavoritesWheelState extends State<ScrollableFavoritesWheel> {
                 //   ),
                 // ),
                 child: Transform.scale(
+                  // scale: 1,
                   scale: itemScale,
                   child: Opacity(
                     opacity: itemOpacity,
                     child: Container(
                       // This is the base item structure
                       alignment: Alignment.center,
+                      // decoration: BoxDecoration(border: Border.all()),
                       // decoration: BoxDecoration(
                       //   // color: Colors
                       //   //     .primaries[visualIndex % Colors.primaries.length]
@@ -159,27 +160,51 @@ class _ScrollableFavoritesWheelState extends State<ScrollableFavoritesWheel> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.max,
                           children: [
-                            Text(
-                              // (${difference.toStringAsFixed(2)})
-                              "${itemData.app.appName}  (${fontWeight.toString().substring(12, 15)})",
-                              style: GoogleFonts.inter(
-                                fontSize: 15.0,
-                                fontWeight: fontWeight,
-                                color: settings.isDarkMode
-                                    ? Colors.white
-                                    : Colors.black,
-                                shadows: settings.isDarkMode
-                                    ? <Shadow>[
-                                        // Adding text shadow for better readability
-                                        Shadow(
-                                          offset: Offset(1.0, 1.0),
-                                          blurRadius: 10.0,
-                                          color: Color.fromARGB(150, 0, 0, 0),
-                                        ),
-                                      ]
-                                    : [],
-                              ),
+                            Stack(
+                              children: <Widget>[
+                                Text(
+                                  // (${difference.toStringAsFixed(2)})
+                                  // (${fontWeight.toString().substring(12, 15)})
+                                  "${itemData.app.appName}",
+                                  style: GoogleFonts.inter(
+                                    fontSize: 15.0,
+                                    fontWeight: fontWeight,
+                                    color: settings.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                    shadows: settings.isDarkMode
+                                        ? <Shadow>[
+                                            // Adding text shadow for better readability
+                                            Shadow(
+                                              offset: Offset(1.0, 1.0),
+                                              blurRadius: 10.0,
+                                              color: Color.fromARGB(
+                                                150,
+                                                0,
+                                                0,
+                                                0,
+                                              ),
+                                            ),
+                                          ]
+                                        : [],
+                                  ),
+                                ),
+                                // Positioned(
+                                //   right: 0,
+                                //   top: 0,
+                                //   child: Container(
+                                //     height: 4,
+                                //     width: 10,
+                                //     margin: const EdgeInsets.all(10),
+                                //     decoration: BoxDecoration(
+                                //       color: Colors.black26,
+                                //       borderRadius: BorderRadius.circular(20),
+                                //     ),
+                                //   ),
+                                // ),
+                              ],
                             ),
                             // Text(
                             //   "${difference.toStringAsFixed(2)} ${itemScale.toStringAsFixed(2)}x",

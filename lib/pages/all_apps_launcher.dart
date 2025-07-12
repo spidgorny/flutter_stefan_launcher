@@ -5,6 +5,7 @@ import 'package:watch_it/watch_it.dart';
 
 import '../data/data_repo.dart';
 import '../data/my_app_info.dart';
+import '../data/settings.dart';
 import '../main.dart';
 import '../service/app_list_service.dart';
 import '../swipable.dart';
@@ -39,6 +40,7 @@ class _AllAppsLauncherState extends State<AllAppsLauncher> {
   Widget build(BuildContext context) {
     debugPrintX('build');
     var appListService = getIt<AppListService>();
+    final settings = watch(di<Settings>());
 
     final dataRepo = watch(di<DataRepo>());
     // var nonFavApps = applications
@@ -66,6 +68,7 @@ class _AllAppsLauncherState extends State<AllAppsLauncher> {
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppBar(
           leading: IconButton(
+            color: settings.isDarkMode ? Colors.white : Colors.black,
             onPressed: () {
               // Navigator.pop(context);
               SwipeableScaffold.of(context)?.scrollBackToCenter();
@@ -76,7 +79,9 @@ class _AllAppsLauncherState extends State<AllAppsLauncher> {
           title: TextField(
             controller: _searchController,
             decoration: InputDecoration(
-              hintText: 'Search ${appListService.applications.length} apps...',
+              hintText: 'Search...',
+              hintStyle: TextStyle(fontFamily: 'Inter', fontSize: 18),
+              //  ${appListService.applications.length}
               border: InputBorder.none,
             ),
             keyboardType: TextInputType.text,
@@ -109,6 +114,41 @@ class _AllAppsLauncherState extends State<AllAppsLauncher> {
   }
 }
 
+class ListTileSmall extends StatelessWidget {
+  final Widget title;
+  final Widget trailing;
+  final GestureTapCallback onTap;
+  final GestureLongPressCallback onLongPress;
+  const ListTileSmall({
+    super.key,
+    required this.title,
+    required this.trailing,
+    required this.onTap,
+    required this.onLongPress,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      onLongPress: onLongPress,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 16, 0),
+              child: trailing,
+            ),
+            title,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class ListItemWithoutIcon extends StatelessWidget with WatchItMixin {
   AppInfo app;
   ListItemWithoutIcon(this.app);
@@ -117,6 +157,7 @@ class ListItemWithoutIcon extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final dataRepo = watch(di<DataRepo>());
+    final settings = watch(di<Settings>());
 
     var myAppInfo = MyAppInfo(
       app: app,
@@ -125,27 +166,34 @@ class ListItemWithoutIcon extends StatelessWidget with WatchItMixin {
       ),
     );
 
-    return ListTile(
+    return ListTileSmall(
+      // dense: true,
+      // visualDensity: VisualDensity.compact,
       onTap: () {
         appCheck.launchApp(app.packageName);
       },
       title: Text(
         app.appName!,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 25,
-          fontFamily: 'Roboto',
+          fontFamily: 'Inter',
           fontWeight: FontWeight.bold,
-          color: Colors.black87,
+          color: settings.isDarkMode ? Colors.white : Colors.black87,
         ),
       ),
       trailing: myAppInfo.isFav
           ? IconButton(
+              visualDensity: VisualDensity.compact,
               onPressed: () => dataRepo.toggleFavorite(app),
               icon: Icon(Icons.star, color: Colors.yellow),
             )
           : IconButton(
+              visualDensity: VisualDensity.compact,
               onPressed: () => dataRepo.toggleFavorite(app),
-              icon: Icon(Icons.star_border, color: Colors.black38),
+              icon: Icon(
+                Icons.star_border,
+                color: settings.isDarkMode ? Colors.white : Colors.black38,
+              ),
             ),
       onLongPress: () async {
         String action = await showMaterialModalBottomSheet(

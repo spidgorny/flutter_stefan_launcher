@@ -16,7 +16,7 @@ class BottomButtons extends StatelessWidget {
         children: [
           IconButton(
             icon: Icon(
-              Icons.phone,
+              Icons.phone_outlined,
               size: 48,
               // color: Colors.white
             ),
@@ -27,18 +27,18 @@ class BottomButtons extends StatelessWidget {
           ),
           IconButton(
             icon: Icon(
-              Icons.web,
+              Icons.settings_outlined,
               size: 48,
               // color: Colors.white
             ),
             tooltip: 'web',
             onPressed: () {
-              appCheck.launchApp('com.android.chrome');
+              appCheck.launchApp('com.android.settings');
             },
           ),
           IconButton(
             icon: Icon(
-              Icons.photo,
+              Icons.photo_outlined,
               size: 48,
               // color: Colors.white
             ),
@@ -49,7 +49,7 @@ class BottomButtons extends StatelessWidget {
           ),
           IconButton(
             icon: Icon(
-              Icons.camera,
+              Icons.photo_camera_outlined,
               size: 48,
               // color: Colors.white
             ),

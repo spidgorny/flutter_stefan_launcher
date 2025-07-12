@@ -34,7 +34,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 trailing: Icon(Icons.home),
               ),
               SettingsTile(
-                title: Text('Share DETOXD (please)'),
+                title: Text('Share DETOXD'),
                 trailing: Icon(Icons.share),
                 onPressed: (BuildContext context) {
                   SharePlus.instance.share(

@@ -28,9 +28,10 @@ class _WheelState extends State<Wheel> {
         children: [
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(34, 34, 0, 0.0),
+              // padding: const EdgeInsets.fromLTRB(34, 34, 0, 0),
+              padding: const EdgeInsets.fromLTRB(0, 34, 0, 0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   LiveTimeWidget(),
