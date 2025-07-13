@@ -3,6 +3,7 @@ import 'package:settings_ui/settings_ui.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:watch_it/watch_it.dart';
 
+import '../../data/platform_service.dart';
 import '../../data/settings.dart';
 import '../../main.dart';
 
@@ -32,6 +33,10 @@ class _SettingsPageState extends State<SettingsPage> {
                 title: Text('Set as default launcher'),
                 description: Text('Swipe up will open DETOXD'),
                 trailing: Icon(Icons.home),
+                onPressed: (BuildContext context) {
+                  var service = MyPlatformService();
+                  service.openLauncherDialog();
+                },
               ),
               SettingsTile(
                 title: Text('Share DETOXD'),

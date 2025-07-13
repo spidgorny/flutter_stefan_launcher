@@ -34,10 +34,30 @@ class MainActivity : FlutterActivity() {
 
                 // Send the result back to Flutter
                 result.success(dataFromKotlin)
+            } else if (call.method == "openLauncherDialog") {
+                val dataFromKotlin = openLauncherDialog();
+
+                // Send the result back to Flutter
+                result.success(dataFromKotlin)
             } else {
                 // If the method is not recognized, indicate it's not implemented
                 result.notImplemented()
             }
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun openLauncherDialog() {
+        try {
+            val intent = Intent(Settings.ACTION_HOME_SETTINGS)
+            // Add this flag if you are starting the activity from a context
+            // that is not an Activity (e.g., a Service or Application context)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            this.startActivity(intent);
+        } catch (e: Exception) {
+            // Handle the case where the Intent is not available on some devices.
+            // This is unlikely for this specific Intent but is good practice.
+            Toast.makeText(this, "Could not open launcher settings.", Toast.LENGTH_SHORT).show()
         }
     }
 
