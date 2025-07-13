@@ -15,14 +15,20 @@ class DataRepo with ChangeNotifier {
   late final SharedPreferencesWithCache _asyncPrefs;
   List<MyAppInfo> favorites = [];
   List<AppUsageInfo> appUsageInfo = [];
+  bool isTriggered = false;
   bool isLoading = true;
 
   DataRepo() {
-    debugPrint('DataRepo init');
-    init();
+    // init();
+    // init should be called manually to allow the UI to display once
   }
 
   Future<void> init() async {
+    debugPrint('DataRepo init');
+    if (isTriggered) {
+      return;
+    }
+    isTriggered = true;
     await initSharedPrefs();
     await loadFavorites();
     isLoading = false;

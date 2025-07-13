@@ -5,7 +5,7 @@ import 'package:watch_it/watch_it.dart';
 
 import '../../data/platform_service.dart';
 import '../../data/settings.dart';
-import '../../main.dart';
+import '../../theme_notifier.dart';
 
 class SettingsPage extends StatefulWidget with WatchItStatefulWidgetMixin {
   const SettingsPage({super.key});
