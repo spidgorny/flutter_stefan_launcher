@@ -3,6 +3,7 @@ import 'package:DETOXD/service/app_list_service.dart';
 import 'package:DETOXD/swipable.dart';
 import 'package:DETOXD/theme_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -35,6 +36,9 @@ final _router = GoRouter(
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setupDependencies();
+  // Remove the top bar (status bar) with Android notifications and time
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
   var settings = getIt<Settings>();
   await settings.init();
   runApp(const MyApp());
@@ -110,12 +114,14 @@ class _MyAppState extends State<MyApp> {
 
     if (!settings.isReady || dataRepo.isLoading) {
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: const Scaffold(body: Center(child: CircularProgressIndicator())),
         theme: lightTheme,
         darkTheme: darkTheme,
       );
     } else {
       return MaterialApp.router(
+        debugShowCheckedModeBanner: false,
         routerConfig: _router,
         title: 'DETOXD',
         theme: lightTheme,

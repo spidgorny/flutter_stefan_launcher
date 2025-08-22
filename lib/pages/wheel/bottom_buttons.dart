@@ -9,7 +9,7 @@ class BottomButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 0, vertical: 16),
       // color: Colors.blueAccent,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
