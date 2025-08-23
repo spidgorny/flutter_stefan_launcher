@@ -1,12 +1,15 @@
 import 'package:appcheck/appcheck.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../data/data_repo.dart';
+import '../../data/my_app_info.dart';
 import '../../data/settings.dart';
 import '../../main.dart';
 import '../../service/sound_service.dart';
+import '../applist/modal_fit.dart';
 
 class ScrollableFavoritesWheel extends StatefulWidget
     with WatchItStatefulWidgetMixin {
@@ -157,6 +160,8 @@ class _ScrollableFavoritesWheelState extends State<ScrollableFavoritesWheel> {
                       // ),
                       child: GestureDetector(
                         onTap: () => _launchApp(context, itemData.app),
+                        onLongPress: () =>
+                            _handleLongPress(context, itemData, dataRepo),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -240,6 +245,22 @@ class _ScrollableFavoritesWheelState extends State<ScrollableFavoritesWheel> {
         SnackBar(content: Text("${app.appName ?? app.packageName} not found!")),
       );
       debugPrint("Error launching app: $e");
+    }
+  }
+
+  Future<void> _handleLongPress(
+    BuildContext context,
+    MyAppInfo itemData,
+    DataRepo dataRepo,
+  ) async {
+    String action = await showMaterialModalBottomSheet(
+      expand: false,
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => ModalFit(app: itemData),
+    );
+    if (action == ModalFit.ADD_TO_FAVORITES) {
+      dataRepo.toggleFavorite(itemData.app);
     }
   }
 

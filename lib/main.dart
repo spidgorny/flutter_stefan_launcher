@@ -1,4 +1,4 @@
-import 'package:DETOXD/pages/all_apps_launcher.dart';
+import 'package:DETOXD/pages/applist/all_apps_launcher.dart';
 import 'package:DETOXD/service/app_list_service.dart';
 import 'package:DETOXD/swipable.dart';
 import 'package:DETOXD/theme_notifier.dart';
@@ -42,6 +42,10 @@ void main() async {
   var settings = getIt<Settings>();
   await settings.init();
   runApp(const MyApp());
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
 }
 
 void setupDependencies() {

@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../data/data_repo.dart';
-import '../data/my_app_info.dart';
-import '../data/settings.dart';
-import '../main.dart';
-import '../service/app_list_service.dart';
-import '../swipable.dart';
-import 'applist/modal_fit.dart';
+import '../../data/data_repo.dart';
+import '../../data/my_app_info.dart';
+import '../../data/settings.dart';
+import '../../main.dart';
+import '../../service/app_list_service.dart';
+import '../../swipable.dart';
+import 'modal_fit.dart';
 
 class AllAppsLauncher extends StatefulWidget with WatchItStatefulWidgetMixin {
   const AllAppsLauncher({super.key});
@@ -83,6 +83,15 @@ class _AllAppsLauncherState extends State<AllAppsLauncher> {
               hintStyle: TextStyle(fontFamily: 'Inter', fontSize: 18),
               //  ${appListService.applications.length}
               border: InputBorder.none,
+              suffixIcon: _searchController.text.isEmpty
+                  ? null
+                  : IconButton(
+                      icon: Icon(Icons.clear),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() {});
+                      },
+                    ),
             ),
             keyboardType: TextInputType.text,
             onChanged: (value) {

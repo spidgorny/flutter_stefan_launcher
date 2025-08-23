@@ -7,6 +7,8 @@ import '../../data/my_app_info.dart';
 import '../../main.dart';
 import 'list_item.dart';
 
+/// @deprecated - not used anymore
+/// @see all_apps_launcher.dart
 class AppList extends StatefulWidget with WatchItStatefulWidgetMixin {
   const AppList({super.key});
 
@@ -68,6 +70,18 @@ class _AppListState extends State<AppList> {
             decoration: InputDecoration(
               hintText: 'Search ${appListService.applications.length} apps...',
               border: InputBorder.none,
+              suffixIcon: _searchController.text.isEmpty
+                  ? null
+                  : IconButton(
+                      icon: Icon(
+                        Icons.clear,
+                        color: Theme.of(context).focusColor,
+                      ),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() {});
+                      },
+                    ),
             ),
             keyboardType: TextInputType.text,
             onChanged: (value) {
