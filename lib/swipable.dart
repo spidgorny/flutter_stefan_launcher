@@ -3,6 +3,7 @@ import 'package:DETOXD/pages/settings/settings_page.dart';
 import 'package:DETOXD/pages/wheel/app_wheel.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class SwipeableScaffold extends StatefulWidget {
   const SwipeableScaffold({super.key});
@@ -16,6 +17,11 @@ class SwipeableScaffold extends StatefulWidget {
 }
 
 class _SwipeableScaffoldState extends State<SwipeableScaffold> {
+  void _handlePageOneReached() {
+    // Add any specific handling when page 1 is reached
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
+  }
+
   final PageController _pageController = PageController(initialPage: 1);
   int _currentPageIndex = 1;
 
@@ -34,6 +40,7 @@ class _SwipeableScaffoldState extends State<SwipeableScaffold> {
   }
 
   scrollBackToCenter() {
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
     _pageController.animateToPage(
       1,
       duration: const Duration(milliseconds: 300),
@@ -59,6 +66,9 @@ class _SwipeableScaffoldState extends State<SwipeableScaffold> {
             setState(() {
               _currentPageIndex = index;
             });
+            if (index == 1) {
+              _handlePageOneReached();
+            }
           },
           physics: const BouncingScrollPhysics(),
           dragStartBehavior: DragStartBehavior.start,

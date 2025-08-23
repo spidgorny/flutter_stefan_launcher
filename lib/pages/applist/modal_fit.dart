@@ -56,8 +56,37 @@ class ModalFit extends StatelessWidget {
               leading: Icon(Icons.edit),
               onTap: () => _showRenameDialog(context),
             ),
+            ListTile(
+              title: Text('Remove App'),
+              leading: Icon(Icons.delete),
+              onTap: () => _showRemoveDialog(context),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Future<void> _showRemoveDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Remove App'),
+        content: Text('Are you sure you want to remove this app?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              di<DataRepo>().removeApp(app.app.packageName);
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            child: Text('Remove'),
+          ),
+        ],
       ),
     );
   }

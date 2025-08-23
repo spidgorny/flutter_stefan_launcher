@@ -164,4 +164,10 @@ class DataRepo with ChangeNotifier {
       await saveFavorites();
     }
   }
+
+  Future<void> removeApp(String packageName) async {
+    favorites.removeWhere((e) => e.app.packageName == packageName);
+    notifyListeners();
+    await saveFavorites();
+  }
 }
