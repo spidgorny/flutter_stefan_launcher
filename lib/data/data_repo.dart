@@ -142,4 +142,26 @@ class DataRepo with ChangeNotifier {
       }
     }
   }
+
+  Future<void> renameApp(String packageName, String newName) async {
+    var index = favorites.indexWhere((e) => e.app.packageName == packageName);
+    if (index != -1) {
+      var oldApp = favorites[index];
+      var newAppInfo = AppInfo(
+        packageName: oldApp.app.packageName,
+        appName: newName,
+        icon: oldApp.app.icon,
+        versionName: oldApp.app.versionName,
+        isSystemApp: oldApp.app.isSystemApp,
+        versionCode: oldApp.app.versionCode,
+      );
+      favorites[index] = MyAppInfo(
+        app: newAppInfo,
+        isFav: oldApp.isFav,
+        usageTime: oldApp.usageTime,
+      );
+      notifyListeners();
+      await saveFavorites();
+    }
+  }
 }

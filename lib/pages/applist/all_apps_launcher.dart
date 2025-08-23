@@ -62,6 +62,14 @@ class _AllAppsLauncherState extends State<AllAppsLauncher> {
           .toList();
     }
 
+    // searchResults.insert(
+    //   0,
+    //   AppInfo(
+    //     packageName: 'some.package',
+    //     appName: 'Very long package name that does not fit on the screen',
+    //   ),
+    // );
+
     Widget x = Scaffold(
       // backgroundColor: Colors.transparent,
       appBar: PreferredSize(
@@ -150,7 +158,7 @@ class ListTileSmall extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(8, 0, 16, 0),
               child: trailing,
             ),
-            title,
+            Expanded(child: title),
           ],
         ),
       ),
@@ -189,6 +197,8 @@ class ListItemWithoutIcon extends StatelessWidget with WatchItMixin {
           fontWeight: FontWeight.bold,
           color: settings.isDarkMode ? Colors.white : Colors.black87,
         ),
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
       ),
       trailing: myAppInfo.isFav
           ? IconButton(

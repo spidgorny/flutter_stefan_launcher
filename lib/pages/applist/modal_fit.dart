@@ -1,6 +1,8 @@
 import 'package:appcheck/appcheck.dart';
 import 'package:flutter/material.dart';
+import 'package:watch_it/watch_it.dart';
 
+import '../../data/data_repo.dart';
 import '../../data/my_app_info.dart';
 import '../../data/platform_service.dart';
 
@@ -49,8 +51,44 @@ class ModalFit extends StatelessWidget {
                 Navigator.of(context).pop();
               },
             ),
+            ListTile(
+              title: Text('Rename App'),
+              leading: Icon(Icons.edit),
+              onTap: () => _showRenameDialog(context),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Future<void> _showRenameDialog(BuildContext context) async {
+    final textController = TextEditingController(text: app.app.appName);
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Rename App'),
+        content: TextField(
+          controller: textController,
+          decoration: InputDecoration(hintText: "Enter new name"),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              di<DataRepo>().renameApp(
+                app.app.packageName,
+                textController.text,
+              );
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            child: Text('Save'),
+          ),
+        ],
       ),
     );
   }
