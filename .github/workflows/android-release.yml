@@ -1,0 +1,84 @@
+name: Android Release
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      lane:
+        description: 'Fastlane lane to use (internal, beta, production)'
+        required: true
+        default: 'internal'
+        type: choice
+        options:
+          - internal
+          - beta
+          - production
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.10.0'
+          channel: 'stable'
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+          bundler-cache: true
+
+      - name: Setup Fastlane
+        run: |
+          cd android
+          gem install bundler
+          bundle install
+
+      - name: Create Google Play API key file
+        run: echo '${{ secrets.PLAY_STORE_API_KEY_JSON }}' > android/play_store_api_key.json
+
+      - name: Create keystore file
+        run: |
+          echo '${{ secrets.ANDROID_KEYSTORE_BASE64 }}' | base64 --decode > android/app/upload-keystore.jks
+
+      - name: Create key.properties file
+        run: |
+          echo 'storePassword=${{ secrets.KEYSTORE_PASSWORD }}' > android/key.properties
+          echo 'keyPassword=${{ secrets.KEY_PASSWORD }}' >> android/key.properties
+          echo 'keyAlias=${{ secrets.KEY_ALIAS }}' >> android/key.properties
+          echo 'storeFile=upload-keystore.jks' >> android/key.properties
+
+      - name: Update Fastlane Appfile
+        run: |
+          sed -i 's|path/to/your/play_store_api_key.json|play_store_api_key.json|g' android/fastlane/Appfile
+          # Update package name if needed
+          # sed -i 's|com.example.DETOXD|your.actual.package.name|g' android/fastlane/Appfile
+
+      - name: Run Fastlane
+        run: |
+          cd android
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            bundle exec fastlane ${{ github.event.inputs.lane }}
+          elif [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            bundle exec fastlane production
+          else
+            bundle exec fastlane internal
+          fi

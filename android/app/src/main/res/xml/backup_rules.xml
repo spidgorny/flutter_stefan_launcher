@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- Include all app data in backups by default -->
+    <include domain="root" path="." />
+    <include domain="file" path="." />
+    <include domain="database" path="." />
+    <include domain="sharedpref" path="." />
+    <include domain="external" path="." />
+
+    <!-- Exclude sensitive information -->
+    <exclude domain="sharedpref" path="sensitive_prefs.xml" />
+    <exclude domain="database" path="sensitive_data.db" />
+</full-backup-content>

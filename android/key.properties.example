@@ -1,0 +1,11 @@
+# This is an example file for the signing configuration
+# Create a copy named 'key.properties' with your actual keystore information
+
+# Path to your keystore file relative to the app directory
+storeFile=../upload-keystore.jks
+# Password for your keystore
+storePassword=your_keystore_password
+# Alias name in the keystore
+keyAlias=your_key_alias
+# Password for the key
+keyPassword=your_key_password
