@@ -69,27 +69,33 @@ class DataRepo with ChangeNotifier {
     if (favorites.length < 2) {
       favorites.add(
         MyAppInfo(
-          app: AppInfo(packageName: 'whatsapp', appName: 'WhatsApp'),
+          app: AppInfo(packageName: 'com.whatsapp', appName: 'WhatsApp'),
         ),
       );
       favorites.add(
         MyAppInfo(
-          app: AppInfo(packageName: 'spotify', appName: 'Spotify'),
+          app: AppInfo(packageName: 'com.spotify.music', appName: 'Spotify'),
+        ),
+      );
+      // favorites.add(
+      //   MyAppInfo(
+      //     app: AppInfo(packageName: 'com.android.camera2', appName: 'Camera'),
+      //   ),
+      // );
+      favorites.add(
+        MyAppInfo(
+          app: AppInfo(
+            packageName: 'org.telegram.messenger',
+            appName: 'Telegram',
+          ),
         ),
       );
       favorites.add(
         MyAppInfo(
-          app: AppInfo(packageName: 'com.android.camera2', appName: 'Camera'),
-        ),
-      );
-      favorites.add(
-        MyAppInfo(
-          app: AppInfo(packageName: 'telegram', appName: 'Telegram'),
-        ),
-      );
-      favorites.add(
-        MyAppInfo(
-          app: AppInfo(packageName: 'tiktok', appName: 'TikTok'),
+          app: AppInfo(
+            packageName: 'com.zhiliaoapp.musically',
+            appName: 'TikTok',
+          ),
         ),
       );
     }

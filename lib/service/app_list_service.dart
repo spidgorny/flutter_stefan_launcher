@@ -269,6 +269,15 @@ class AppListService with ChangeNotifier {
         })
         .then((processedApps) {
           debugPrintX('getApplications done: ${processedApps.length} apps');
+          var oneApp = processedApps.where(
+            (AppInfo app) => app.appName!.toLowerCase().contains('camera'),
+          );
+
+          for (var app in oneApp) {
+            debugPrintX(
+              'Found camera app: ${app.appName} (${app.packageName})',
+            );
+          }
           isLoading = false;
           applications = processedApps;
           notifyListeners();
