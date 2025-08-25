@@ -5,6 +5,7 @@ import 'package:watch_it/watch_it.dart';
 import '../../data/data_repo.dart';
 import '../../data/my_app_info.dart';
 import '../../data/platform_service.dart';
+import '../../services/app_report_service.dart';
 
 class ModalFit extends StatelessWidget {
   static const ADD_TO_FAVORITES = 'Add to Favorites';
@@ -60,6 +61,11 @@ class ModalFit extends StatelessWidget {
               title: Text('Remove App'),
               leading: Icon(Icons.delete),
               onTap: () => _showRemoveDialog(context),
+            ),
+            ListTile(
+              title: Text('Report App'),
+              leading: Icon(Icons.report),
+              onTap: () => _showReportDialog(context),
             ),
           ],
         ),
@@ -133,6 +139,51 @@ class ModalFit extends StatelessWidget {
         SnackBar(content: Text("${app.appName ?? app.packageName} not found!")),
       );
       debugPrint("Error launching app: $e");
+    }
+  }
+
+  Future<void> _showReportDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Report App'),
+        content: Text('Do you want to report this app to the server?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              _reportApp(context);
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            child: Text('Report'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _reportApp(BuildContext context) async {
+    try {
+      final reportService = di<AppReportService>();
+      await reportService.reportApp(
+        packageName: app.app.packageName,
+        appName: app.app.appName ?? 'Unknown',
+      );
+
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("App reported successfully")));
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Failed to report app: $e")));
+      debugPrint("Error reporting app: $e");
     }
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../main.dart';
-import '../../service/app_list_service.dart';
+import '../../services/app_list_service.dart';
 
 class AppGridSheet extends StatelessWidget {
   AppGridSheet({super.key});

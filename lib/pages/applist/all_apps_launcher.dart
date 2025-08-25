@@ -7,7 +7,7 @@ import '../../data/data_repo.dart';
 import '../../data/my_app_info.dart';
 import '../../data/settings.dart';
 import '../../main.dart';
-import '../../service/app_list_service.dart';
+import '../../services/app_list_service.dart';
 import '../../swipable.dart';
 import 'modal_fit.dart';
 

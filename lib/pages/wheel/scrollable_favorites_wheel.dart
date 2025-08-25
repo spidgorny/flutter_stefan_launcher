@@ -8,7 +8,7 @@ import '../../data/data_repo.dart';
 import '../../data/my_app_info.dart';
 import '../../data/settings.dart';
 import '../../main.dart';
-import '../../service/sound_service.dart';
+import '../../services/sound_service.dart';
 import '../applist/modal_fit.dart';
 
 class ScrollableFavoritesWheel extends StatefulWidget

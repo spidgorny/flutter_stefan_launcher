@@ -1,4 +1,4 @@
-import 'package:DETOXD/service/app_list_service.dart';
+import 'package:DETOXD/services/app_list_service.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 

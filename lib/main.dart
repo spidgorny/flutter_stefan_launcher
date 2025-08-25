@@ -1,5 +1,5 @@
 import 'package:DETOXD/pages/applist/all_apps_launcher.dart';
-import 'package:DETOXD/service/app_list_service.dart';
+import 'package:DETOXD/services/service_locator.dart';
 import 'package:DETOXD/swipable.dart';
 import 'package:DETOXD/theme_notifier.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +13,6 @@ import 'data/data_repo.dart';
 import 'data/settings.dart';
 import 'pages/applist/app_list.dart';
 import 'pages/settings/settings_page.dart';
-import 'service/sound_service.dart';
 
 final getIt = GetIt.instance;
 
@@ -46,17 +45,6 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-}
-
-void setupDependencies() {
-  getIt.registerSingleton(Settings());
-  // will be done later
-  // getIt.registerSingleton(DataRepo());
-  getIt.registerSingleton(SoundService());
-  getIt.registerSingleton(ThemeNotifier());
-  getIt.registerSingleton(AppListService());
-  // getIt.registerLazySingleton(() => ApiService());
-  // getIt.registerFactory(() => DataRepository(apiService: getIt<ApiService>()));
 }
 
 class MyApp extends StatefulWidget with WatchItStatefulWidgetMixin {
