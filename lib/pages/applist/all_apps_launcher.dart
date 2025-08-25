@@ -43,53 +43,34 @@ class _AllAppsLauncherState extends State<AllAppsLauncher> {
     final settings = watch(di<Settings>());
 
     final dataRepo = watch(di<DataRepo>());
-    // var nonFavApps = applications
-    //     .where(
-    //       (app) => !(dataRepo.favorites.any(
-    //         (MyAppInfo x) => x.app.packageName == app.packageName,
-    //       )),
-    //     )
-    //     .toList();
-    // debugPrint('search: ${_searchController.text}');
+
     var searchResults = appListService.applications;
     if (_searchController.text != '') {
       searchResults = searchResults
           .where(
-            (app) => app.appName!.toLowerCase().contains(
+            (app) => (app.appName ?? app.packageName).toLowerCase().contains(
               _searchController.text.toLowerCase(),
             ),
           )
           .toList();
     }
 
-    // searchResults.insert(
-    //   0,
-    //   AppInfo(
-    //     packageName: 'some.package',
-    //     appName: 'Very long package name that does not fit on the screen',
-    //   ),
-    // );
-
     Widget x = Scaffold(
-      // backgroundColor: Colors.transparent,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppBar(
           leading: IconButton(
             color: settings.isDarkMode ? Colors.white : Colors.black,
             onPressed: () {
-              // Navigator.pop(context);
               SwipeableScaffold.of(context)?.scrollBackToCenter();
             },
             icon: const Icon(Icons.arrow_back),
           ),
-
           title: TextField(
             controller: _searchController,
             decoration: InputDecoration(
               hintText: 'Search...',
               hintStyle: TextStyle(fontFamily: 'Inter', fontSize: 18),
-              //  ${appListService.applications.length}
               border: InputBorder.none,
               suffixIcon: _searchController.text.isEmpty
                   ? null
@@ -103,12 +84,10 @@ class _AllAppsLauncherState extends State<AllAppsLauncher> {
             ),
             keyboardType: TextInputType.text,
             onChanged: (value) {
-              setState(() {}); // typing should trigger widget refresh
+              setState(() {});
             },
             cursorColor: Colors.black,
           ),
-          // surfaceTintColor: Colors.white30,
-          // backgroundColor: Colors.amber,
           foregroundColor: Colors.blueAccent,
         ),
       ),
@@ -124,7 +103,6 @@ class _AllAppsLauncherState extends State<AllAppsLauncher> {
                 },
               ),
             ),
-      // bottomNavigationBar: BottomButtons(appCheck: appCheck),
     );
     debugPrintX('build done');
     return x;

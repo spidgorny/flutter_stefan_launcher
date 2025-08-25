@@ -1,3 +1,4 @@
+import 'package:DETOXD/services/app_list_service.dart';
 import 'package:appcheck/appcheck.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
@@ -169,10 +170,14 @@ class ModalFit extends StatelessWidget {
   Future<void> _reportApp(BuildContext context) async {
     try {
       final reportService = di<AppReportService>();
+      final appList = di<AppListService>();
+
       await reportService.reportApp(
         packageName: app.app.packageName,
         appName: app.app.appName ?? 'Unknown',
       );
+
+      appList.addToBlacklist(app.app.packageName);
 
       if (!context.mounted) return;
       ScaffoldMessenger.of(
