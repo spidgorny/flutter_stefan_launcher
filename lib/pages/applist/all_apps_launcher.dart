@@ -124,20 +124,40 @@ class ListTileSmall extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      onLongPress: onLongPress,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 0, 16, 0),
-              child: trailing,
+    bool isLongPressing = false;
+    return StatefulBuilder(
+      builder: (context, setState) => Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTapDown: (TapDownDetails details) {
+            setState(() => isLongPressing = true);
+          },
+          onTapUp: (TapUpDetails details) {
+            setState(() => isLongPressing = false);
+          },
+          onTapCancel: () {
+            setState(() => isLongPressing = false);
+          },
+          onTap: onTap,
+          onLongPress: onLongPress,
+          child: Container(
+            decoration: BoxDecoration(
+              color: isLongPressing ? Colors.grey.withOpacity(0.3) : null,
             ),
-            Expanded(child: title),
-          ],
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 0, 16, 0),
+                    child: trailing,
+                  ),
+                  Expanded(child: title),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -193,7 +213,7 @@ class ListItemWithoutIcon extends StatelessWidget with WatchItMixin {
               ),
             ),
       onLongPress: () async {
-        String action = await showMaterialModalBottomSheet(
+        String? action = await showMaterialModalBottomSheet(
           expand: false,
           context: context,
           backgroundColor: Colors.transparent,

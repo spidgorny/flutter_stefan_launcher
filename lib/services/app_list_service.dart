@@ -251,21 +251,31 @@ class AppListService with ChangeNotifier {
     'com.android.bips',
   ];
 
+  AppListService() {
+    getApplications().then((_) {
+      applications = filterBlacklistedApps(applications);
+      debugPrintX('getApplications done: ${applications.length} apps');
+      notifyListeners();
+    });
+  }
+
   /// Adds a package to the blacklist and refreshes the application list
   Future<void> addToBlacklist(String packageName) async {
     if (!_largePackageBlacklist.contains(packageName)) {
       _largePackageBlacklist.add(packageName);
-      await getApplications(); // Refresh the application list
+      applications = filterBlacklistedApps(
+        applications,
+      ); // Refresh the application list
+      debugPrint(
+        'After adding blacklisted package, number of good apps: ${applications.length}',
+      );
+      notifyListeners();
     }
   }
 
   debugPrintX(String message) {
     debugPrint('${DateTime.now().difference(startTime)} $message');
     startTime = DateTime.now();
-  }
-
-  AppListService() {
-    getApplications();
   }
 
   Future<void> getApplications() async {
@@ -291,27 +301,22 @@ class AppListService with ChangeNotifier {
     }
 
     // Run the app fetching and processing in a separate isolate
-    foundation
-        .compute(_fetchAndProcessApps, {
-          'rootIsolateToken': RootIsolateToken.instance!,
-          // 'apps': apps,
-          'blackList': _largePackageBlacklist,
-        })
-        .then((processedApps) {
-          debugPrintX('getApplications done: ${processedApps.length} apps');
-          var oneApp = processedApps.where(
-            (AppInfo app) => app.appName!.toLowerCase().contains('camera'),
-          );
+    var processedApps = await foundation.compute(_fetchAndProcessApps, {
+      'rootIsolateToken': RootIsolateToken.instance!,
+      // 'apps': apps,
+      // 'blackList': _largePackageBlacklist,
+    });
 
-          for (var app in oneApp) {
-            debugPrintX(
-              'Found camera app: ${app.appName} (${app.packageName})',
-            );
-          }
-          isLoading = false;
-          applications = processedApps;
-          notifyListeners();
-        });
+    debugPrintX('getApplications done: ${processedApps.length} apps');
+    var oneApp = processedApps.where(
+      (AppInfo app) => app.appName!.toLowerCase().contains('camera'),
+    );
+
+    for (var app in oneApp) {
+      debugPrintX('Found camera app: ${app.appName} (${app.packageName})');
+    }
+    isLoading = false;
+    applications = processedApps;
   }
 
   // This function will be executed in a separate isolate
@@ -323,7 +328,6 @@ class AppListService with ChangeNotifier {
     final appCheck = AppCheck();
     var apps = await appCheck.getInstalledApps();
     // List<AppInfo>? apps = args['apps'];
-    List<String> blacklist = args['blackList'];
     // debugPrintX is not available in isolate, use debugPrint directly if needed
     debugPrint('Isolate: getInstalledApps');
     debugPrint('Isolate: installed apps: ${apps?.length}');
@@ -344,11 +348,6 @@ class AppListService with ChangeNotifier {
     }
 
     apps = apps.where((AppInfo app) {
-      bool isBlacklisted = blacklist.any(
-        (String x) => app.packageName.startsWith(x),
-      );
-      if (isBlacklisted) return false;
-
       if (badIconApp != null &&
           app.icon != null &&
           badIconApp.icon != null &&
@@ -356,6 +355,17 @@ class AppListService with ChangeNotifier {
         return false;
       }
       return true;
+    }).toList();
+
+    return apps;
+  }
+
+  List<AppInfo> filterBlacklistedApps(List<AppInfo> apps) {
+    apps = apps.where((AppInfo app) {
+      bool isBlacklisted = _largePackageBlacklist.any(
+        (String x) => app.packageName.startsWith(x),
+      );
+      return !isBlacklisted;
     }).toList();
 
     apps.sort(
