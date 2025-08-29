@@ -11,6 +11,82 @@ import '../../main.dart';
 import '../../services/sound_service.dart';
 import '../applist/modal_fit.dart';
 
+class WheelItem extends StatelessWidget with WatchItMixin {
+  final MyAppInfo itemData;
+  final FontWeight fontWeight;
+  var appCheck = AppCheck();
+
+  WheelItem({super.key, required this.itemData, required this.fontWeight});
+
+  @override
+  Widget build(BuildContext context) {
+    final dataRepo = watch(di<DataRepo>());
+    final settings = watch(di<Settings>());
+
+    return GestureDetector(
+      onTap: () => _launchApp(context, itemData.app),
+      onLongPress: () => _handleLongPress(context, itemData, dataRepo),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Stack(
+            children: <Widget>[
+              Text(
+                "${itemData.app.appName}",
+                style: GoogleFonts.inter(
+                  fontSize: 15.0,
+                  fontWeight: fontWeight,
+                  color: settings.isDarkMode ? Colors.white : Colors.black,
+                  shadows: settings.isDarkMode
+                      ? <Shadow>[
+                          Shadow(
+                            offset: Offset(1.0, 1.0),
+                            blurRadius: 10.0,
+                            color: Color.fromARGB(150, 0, 0, 0),
+                          ),
+                        ]
+                      : [],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _launchApp(BuildContext context, AppInfo app) async {
+    try {
+      await appCheck.launchApp(app.packageName);
+      debugPrint("${app.appName ?? app.packageName} launched!");
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("${app.appName ?? app.packageName} not found!")),
+      );
+      debugPrint("Error launching app: $e");
+    }
+  }
+
+  Future<void> _handleLongPress(
+    BuildContext context,
+    MyAppInfo itemData,
+    DataRepo dataRepo,
+  ) async {
+    String action = await showMaterialModalBottomSheet(
+      expand: false,
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => ModalFit(app: itemData),
+    );
+    if (action == ModalFit.ADD_TO_FAVORITES) {
+      dataRepo.toggleFavorite(itemData.app);
+    }
+  }
+}
+
 class ScrollableFavoritesWheel extends StatefulWidget
     with WatchItStatefulWidgetMixin {
   const ScrollableFavoritesWheel({super.key});
@@ -24,13 +100,14 @@ class _ScrollableFavoritesWheelState extends State<ScrollableFavoritesWheel> {
   final appCheck = AppCheck();
   final FixedExtentScrollController _scrollController =
       FixedExtentScrollController();
+  final itemExtent = 50.0;
   final SoundService soundService = getIt<SoundService>();
 
   // It's good practice to add the listener in initState and remove in dispose
   @override
   void initState() {
     super.initState();
-    soundService.init(_scrollController);
+    soundService.init(_scrollController, itemExtent);
     // This listener will call setState whenever the scroll position changes,
     // forcing the build method (and thus the ListWheelScrollView's delegate) to re-evaluate.
     _scrollController.addListener(() {
@@ -47,7 +124,6 @@ class _ScrollableFavoritesWheelState extends State<ScrollableFavoritesWheel> {
     final settings = watch(di<Settings>());
     final dataRepo = watch(di<DataRepo>());
     var items = dataRepo.favorites;
-    final itemExtent = 50.0;
 
     return AnimatedBuilder(
       animation: _scrollController,
@@ -158,68 +234,9 @@ class _ScrollableFavoritesWheelState extends State<ScrollableFavoritesWheel> {
                       //     width: 1.0,
                       //   ),
                       // ),
-                      child: GestureDetector(
-                        onTap: () => _launchApp(context, itemData.app),
-                        onLongPress: () =>
-                            _handleLongPress(context, itemData, dataRepo),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Stack(
-                              children: <Widget>[
-                                Text(
-                                  // (${difference.toStringAsFixed(2)})
-                                  // (${fontWeight.toString().substring(12, 15)})
-                                  "${itemData.app.appName}",
-                                  style: GoogleFonts.inter(
-                                    fontSize: 15.0,
-                                    fontWeight: fontWeight,
-                                    color: settings.isDarkMode
-                                        ? Colors.white
-                                        : Colors.black,
-                                    shadows: settings.isDarkMode
-                                        ? <Shadow>[
-                                            // Adding text shadow for better readability
-                                            Shadow(
-                                              offset: Offset(1.0, 1.0),
-                                              blurRadius: 10.0,
-                                              color: Color.fromARGB(
-                                                150,
-                                                0,
-                                                0,
-                                                0,
-                                              ),
-                                            ),
-                                          ]
-                                        : [],
-                                  ),
-                                ),
-                                // Positioned(
-                                //   right: 0,
-                                //   top: 0,
-                                //   child: Container(
-                                //     height: 4,
-                                //     width: 10,
-                                //     margin: const EdgeInsets.all(10),
-                                //     decoration: BoxDecoration(
-                                //       color: Colors.black26,
-                                //       borderRadius: BorderRadius.circular(20),
-                                //     ),
-                                //   ),
-                                // ),
-                              ],
-                            ),
-                            // Text(
-                            //   "${difference.toStringAsFixed(2)} ${itemScale.toStringAsFixed(2)}x",
-                            //   style: TextStyle(
-                            //     fontSize: 8.0,
-                            //     color: Colors.white30,
-                            //   ),
-                            // ),
-                          ],
-                        ),
+                      child: WheelItem(
+                        itemData: itemData,
+                        fontWeight: fontWeight,
                       ),
                     ),
                   ),
@@ -233,35 +250,6 @@ class _ScrollableFavoritesWheelState extends State<ScrollableFavoritesWheel> {
         );
       },
     );
-  }
-
-  Future<void> _launchApp(BuildContext context, AppInfo app) async {
-    try {
-      await appCheck.launchApp(app.packageName);
-      debugPrint("${app.appName ?? app.packageName} launched!");
-    } catch (e) {
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("${app.appName ?? app.packageName} not found!")),
-      );
-      debugPrint("Error launching app: $e");
-    }
-  }
-
-  Future<void> _handleLongPress(
-    BuildContext context,
-    MyAppInfo itemData,
-    DataRepo dataRepo,
-  ) async {
-    String action = await showMaterialModalBottomSheet(
-      expand: false,
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => ModalFit(app: itemData),
-    );
-    if (action == ModalFit.ADD_TO_FAVORITES) {
-      dataRepo.toggleFavorite(itemData.app);
-    }
   }
 
   @override

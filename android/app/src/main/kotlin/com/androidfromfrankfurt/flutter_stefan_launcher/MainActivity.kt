@@ -2,6 +2,9 @@ package com.androidfromfrankfurt.flutter_stefan_launcher
 
 import android.annotation.TargetApi
 import android.content.Intent
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -27,20 +30,15 @@ class MainActivity : FlutterActivity() {
                 call, result ->
             if (call.method == "openAppInfo") {
                 val packageName = call.argument<String>("packageName")
-//                val param2 = call.argument<Int>("param2")
-
-                // Call your actual Kotlin function here
                 val dataFromKotlin = openAppInfo(packageName)
-
-                // Send the result back to Flutter
                 result.success(dataFromKotlin)
             } else if (call.method == "openLauncherDialog") {
-                val dataFromKotlin = openLauncherDialog();
-
-                // Send the result back to Flutter
+                val dataFromKotlin = openLauncherDialog()
                 result.success(dataFromKotlin)
-            } else {
-                // If the method is not recognized, indicate it's not implemented
+            } else if (call.method == "getInstalledAppsWithoutIcons") {
+                result.success(getInstalledAppsWithoutIcons())
+            }
+            else {
                 result.notImplemented()
             }
         }
@@ -50,32 +48,54 @@ class MainActivity : FlutterActivity() {
     private fun openLauncherDialog() {
         try {
             val intent = Intent(Settings.ACTION_HOME_SETTINGS)
-            // Add this flag if you are starting the activity from a context
-            // that is not an Activity (e.g., a Service or Application context)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             this.startActivity(intent);
         } catch (e: Exception) {
-            // Handle the case where the Intent is not available on some devices.
-            // This is unlikely for this specific Intent but is good practice.
             Toast.makeText(this, "Could not open launcher settings.", Toast.LENGTH_SHORT).show()
         }
     }
 
-    // Your actual Kotlin function
     @androidx.annotation.RequiresApi(Build.VERSION_CODES.GINGERBREAD)
     private fun openAppInfo(packageName: String?): String {
-        // Perform some native Android operations or calculations
         val message = "Hello from Kotlin! Received: text=$packageName"
-//        Toast.makeText(this, message, Toast.LENGTH_SHORT).show() // Example: show a Toast
-        // `context` here refers to the `Context` of the `MainActivity`.
-        // `FlutterActivity` (which `MainActivity` extends) is a subclass of `ComponentActivity`,
-        // which in turn is a subclass of `ContextThemeWrapper`, which itself is a `Context`.
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
         val uri = Uri.fromParts("package", packageName, null)
         intent.data = uri
         this.startActivity(intent)
         return message
     }
+
+    @Suppress("DEPRECATION")
+    private fun getVersionCode(packageInfo: PackageInfo): Long {
+        return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) packageInfo.versionCode.toLong()
+        else packageInfo.longVersionCode
+    }
+
+    private fun getInstalledAppsWithoutIcons(): List<Map<String, Any?>> {
+        val packageManager: PackageManager = context.packageManager
+        val packages = packageManager.getInstalledPackages(0)
+        val installedApps: MutableList<Map<String, Any?>> = ArrayList(packages.size)
+        for (pkg in packages) {
+            val app: MutableMap<String, Any?> = HashMap()
+            val appInfo = pkg.applicationInfo
+
+            if (appInfo != null) {
+                app["app_name"] = appInfo.loadLabel(packageManager).toString()
+                app["system_app"] = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
+            } else {
+                app["app_name"] = "N/A"
+                app["system_app"] = false
+            }
+
+            app["package_name"] = pkg.packageName
+            app["version_name"] = pkg.versionName?.toString() // versionName can be null
+            app["version_code"] = getVersionCode(pkg)
+            
+            installedApps.add(app)
+        }
+        return installedApps
+    }
+
 
     // Example of calling a Flutter function from Kotlin (bi-directional communication)
     fun sendEventToFlutter(eventName: String, data: Any?) {

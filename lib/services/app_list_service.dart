@@ -1,8 +1,8 @@
 import 'package:DETOXD/services/blacklist.dart';
-import 'package:appcheck/appcheck.dart';
+import 'package:appcheck/appcheck.dart'; // For AppInfo
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/services.dart'; // For MethodChannel & RootIsolateToken
 
 import 'app_report_service.dart';
 
@@ -43,6 +43,7 @@ class AppListService with ChangeNotifier {
   Future<void> getApplications() async {
     debugPrintX('getApplications start');
     isLoading = true;
+    notifyListeners(); // Notify loading starts
 
     try {
       // Fetch blacklisted apps from the server and merge with local list
@@ -65,20 +66,24 @@ class AppListService with ChangeNotifier {
     // Run the app fetching and processing in a separate isolate
     var processedApps = await foundation.compute(_fetchAndProcessApps, {
       'rootIsolateToken': RootIsolateToken.instance!,
-      // 'apps': apps,
-      // 'blackList': _largePackageBlacklist,
     });
 
-    debugPrintX('getApplications done: ${processedApps.length} apps');
-    var oneApp = processedApps.where(
+    debugPrintX('Processed apps in isolate: ${processedApps.length} apps');
+
+    // Apply blacklist filtering after fetching
+    applications = filterBlacklistedApps(processedApps);
+    debugPrintX('After blacklist filter: ${applications.length} apps');
+
+    var oneApp = applications.where(
       (AppInfo app) => app.appName!.toLowerCase().contains('camera'),
     );
 
     for (var app in oneApp) {
       debugPrintX('Found camera app: ${app.appName} (${app.packageName})');
     }
+
     isLoading = false;
-    applications = processedApps;
+    notifyListeners(); // Notify loading finished and data is ready
   }
 
   // This function will be executed in a separate isolate
@@ -87,54 +92,62 @@ class AppListService with ChangeNotifier {
   ) async {
     RootIsolateToken rootIsolateToken = args['rootIsolateToken'];
     BackgroundIsolateBinaryMessenger.ensureInitialized(rootIsolateToken);
-    final appCheck = AppCheck();
-    var apps = await appCheck.getInstalledApps();
-    // List<AppInfo>? apps = args['apps'];
-    // debugPrintX is not available in isolate, use debugPrint directly if needed
-    debugPrint('Isolate: getInstalledApps');
-    debugPrint('Isolate: installed apps: ${apps?.length}');
 
-    if (apps == null || apps.isEmpty) {
-      return [];
-    }
+    const platform = MethodChannel(
+      'com.androidfromfrankfurt.flutter_stefan_launcher/my_platform_service',
+    );
 
-    // Find the badIconApp within the isolate if necessary, or pass its details
-    AppInfo? badIconApp;
+    debugPrint('Isolate: Calling getInstalledAppsWithoutIcons');
+
+    List<AppInfo> apps = [];
     try {
-      badIconApp = apps.firstWhere(
-        (AppInfo app) => app.packageName == 'com.android.htmlviewer',
+      final List<dynamic>? platformApps = await platform
+          .invokeMethod<List<dynamic>>('getInstalledAppsWithoutIcons');
+
+      debugPrint(
+        'Isolate: Received from platform: ${platformApps?.length} apps',
       );
+
+      if (platformApps != null) {
+        apps = platformApps.map((appData) {
+          final Map<String, dynamic> appMap = Map<String, dynamic>.from(
+            appData as Map,
+          );
+          return AppInfo(
+            appName: appMap['app_name'] as String?,
+            packageName: appMap['package_name'] as String,
+            versionName: appMap['version_name'] as String?,
+            versionCode: (appMap['version_code'] as num?)?.toInt(),
+            isSystemApp: appMap['system_app'] as bool?,
+            icon: null, // Icons are not fetched
+          );
+        }).toList();
+      }
     } catch (e) {
-      // Handle case where badIconApp is not found, if necessary
-      debugPrint('Isolate: com.android.htmlviewer not found.');
+      debugPrint(
+        'Isolate: Error invoking platform method or processing apps: $e',
+      );
+      // Return empty list or rethrow as appropriate for your error handling strategy
     }
 
-    apps = apps.where((AppInfo app) {
-      if (badIconApp != null &&
-          app.icon != null &&
-          badIconApp.icon != null &&
-          foundation.listEquals(app.icon, badIconApp.icon)) {
-        return false;
-      }
-      return true;
-    }).toList();
-
+    debugPrint('Isolate: Parsed ${apps.length} apps');
     return apps;
   }
 
   List<AppInfo> filterBlacklistedApps(List<AppInfo> apps) {
-    apps = apps.where((AppInfo app) {
+    var filteredApps = apps.where((AppInfo app) {
       bool isBlacklisted = _largePackageBlacklist.any(
-        (String x) => app.packageName.startsWith(x),
+        (String x) =>
+            app.packageName?.startsWith(x) ?? false, // handle null packageName
       );
       return !isBlacklisted;
     }).toList();
 
-    apps.sort(
+    filteredApps.sort(
       (a, b) => (a.appName ?? "").toLowerCase().compareTo(
         (b.appName ?? "").toLowerCase(),
       ),
     );
-    return apps;
+    return filteredApps;
   }
 }

@@ -7,8 +7,10 @@ class SoundService {
   final Soundplayer soundPlayer = Soundplayer(16, 1);
   late int soundId;
   double _previousScrollOffset = 0.0;
+  double _itemExtent = 10;
 
-  void init(ScrollController scrollController) async {
+  void init(ScrollController scrollController, double itemExtent) async {
+    _itemExtent = itemExtent;
     await loadTickSound();
     scrollController.addListener(
       () => onScroll(scrollController),
@@ -44,7 +46,7 @@ class SoundService {
         !scrollController.position.atEdge) {
       var diff = (currentScrollOffset - _previousScrollOffset).abs();
       // debugPrint('diff: $diff');
-      if (diff > 50) {
+      if (diff >= _itemExtent) {
         debugPrint('play');
         soundPlayer.play(soundId);
         HapticFeedback.lightImpact();
