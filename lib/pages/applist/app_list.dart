@@ -61,7 +61,7 @@ class _AppListState extends State<AppList> {
     // }
 
     Widget x = Scaffold(
-      // backgroundColor: Colors.transparent,
+      // backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppBar(

@@ -25,7 +25,7 @@ class ModalFit extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: Text(
                 app.app.appName ?? app.app.packageName,
-                style: TextStyle(fontSize: 24, color: Colors.black),
+                style: TextStyle(fontSize: 24),
               ),
             ),
             ListTile(

@@ -127,24 +127,51 @@ class _ScrollableFavoritesWheelState extends State<ScrollableFavoritesWheel> {
                     FontWeight.normal;
               }
 
-              return Container(
-                // decoration: BoxDecoration(
-                //   border: Border.all(
-                //     color: Colors.white.withOpacity(0.1),
-                //     width: 1,
-                //   ),
-                // ),
-                child: Transform.scale(
-                  // scale: 1,
-                  scale: itemScale,
-                  child: Opacity(
-                    opacity: itemOpacity,
-                    child: WheelItem(
-                      itemData: itemData,
-                      fontWeight: fontWeight,
+              return Stack(
+                alignment: Alignment.center,
+                fit: StackFit.expand,
+                children: [
+                  Container(
+                    // decoration: BoxDecoration(
+                    //   border: Border.all(
+                    //     color: Colors.blue.withOpacity(0.5),
+                    //     width: 1,
+                    //   ),
+                    // ),
+                    child: Transform.scale(
+                      // scale: 1,
+                      scale: itemScale,
+                      child: Opacity(
+                        opacity: itemOpacity,
+                        child: WheelItem(
+                          itemData: itemData,
+                          fontWeight: fontWeight,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+
+                  Container(
+                    width: 30,
+                    alignment: Alignment.centerRight,
+                    padding: EdgeInsets.only(right: 8),
+                    child: Container(
+                      // This is the base item structure
+                      width: 1 + itemScale * 10,
+                      height: 5 * itemScale / 1.5,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(
+                          itemOpacity,
+                        ), // Dynamic color example
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        // borderRadius: BorderRadius.only(
+                        //   topLeft: Radius.circular(10.0),
+                        //   bottomLeft: Radius.circular(10.0),
+                        // ),
+                      ),
+                    ),
+                  ),
+                ],
               );
             },
             childCount: settings.isInfinityScroll

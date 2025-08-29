@@ -49,22 +49,6 @@ class WheelItem extends StatelessWidget with WatchItMixin {
                       : [],
                 ),
               ),
-              Container(
-                // This is the base item structure
-                width: 15,
-                // height: 5,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.blueAccent, // Dynamic color example
-                  borderRadius: BorderRadius.circular(10.0),
-                  border: Border.all(
-                    // color: Colors
-                    //     .primaries[visualIndex % Colors.primaries.length]
-                    //     .shade300,
-                    width: 1.0,
-                  ),
-                ),
-              ),
             ],
           ),
         ],
