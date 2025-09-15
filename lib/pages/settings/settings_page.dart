@@ -21,14 +21,36 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     final settings = watch(di<Settings>());
     final themeNotifier = watch(di<ThemeNotifier>());
+
+    const lightSettingsTheme = SettingsThemeData(
+      settingsListBackground: Colors.white,
+      // You can customize other properties like:
+      titleTextColor: Colors.black,
+      settingsSectionBackground: Colors.white,
+      tileHighlightColor: Colors.grey,
+    );
+
+    const darkSettingsTheme = SettingsThemeData(
+      settingsListBackground: Colors.black,
+      // You can customize other properties like:
+      titleTextColor: Colors.white,
+      settingsSectionBackground: Colors.black,
+      tileHighlightColor: Colors.grey,
+      leadingIconsColor: Colors.white,
+    );
+
     return Scaffold(
       backgroundColor: settings.isDarkMode ? Colors.black : Colors.white,
       appBar: AppBar(
         backgroundColor: settings.isDarkMode ? Colors.black : Colors.white,
         title: Text('Settings'),
+        // Ensure AppBar text color contrasts with background
+        foregroundColor: settings.isDarkMode ? Colors.white : Colors.black,
       ),
       body: SettingsList(
         platform: DevicePlatform.android,
+        lightTheme: lightSettingsTheme,
+        darkTheme: darkSettingsTheme,
         sections: [
           SettingsSection(
             title: Text('General'),
