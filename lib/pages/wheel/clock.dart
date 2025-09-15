@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:battery_plus/battery_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -77,13 +78,32 @@ class _LiveTimeWidgetState extends State<LiveTimeWidget> {
     String formattedTime = DateFormat('HH:mm').format(_currentTime);
 
     // Display the formatted time in a Text widget
+    var iconForBattery = Icons.battery_1_bar;
+    if (batteryLevel > 16.5 && batteryLevel < 33) {
+      iconForBattery = Icons.battery_2_bar;
+    }
+    if (batteryLevel > 33 && batteryLevel < 50) {
+      iconForBattery = Icons.battery_3_bar;
+    }
+    if (batteryLevel > 50 && batteryLevel < 66.5) {
+      iconForBattery = Icons.battery_4_bar;
+    }
+    if (batteryLevel > 66.5 && batteryLevel < 82.5) {
+      iconForBattery = Icons.battery_5_bar;
+    }
+    if (batteryLevel > 82.5 && batteryLevel < 99) {
+      iconForBattery = Icons.battery_6_bar;
+    }
+    if (batteryLevel > 99) {
+      iconForBattery = Icons.battery_full;
+    }
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
           formattedTime,
-          style: TextStyle(
+          style: GoogleFonts.inter(
             fontSize: 48, // Larger font size for visibility
             fontWeight: FontWeight.bold,
             // color: Colors.white, // White text color
@@ -101,7 +121,7 @@ class _LiveTimeWidgetState extends State<LiveTimeWidget> {
         ),
         Text(
           DateFormat('EEEE, dd MMM').format(_currentTime),
-          style: TextStyle(
+          style: GoogleFonts.inter(
             fontSize: 18, // Larger font size for visibility
             fontWeight: FontWeight.bold,
             // color: Colors.white, // White text color
@@ -132,13 +152,15 @@ class _LiveTimeWidgetState extends State<LiveTimeWidget> {
                       )
                     : null,
                 Icon(
-                  Icons.battery_4_bar_sharp,
-                  // color: Colors.white
+                  iconForBattery,
+                  size: 18, // color: Colors.white
                 ),
                 ?batteryLevel > 0
                     ? Text(
                         '$batteryLevel%',
-                        style: TextStyle(
+                        style: GoogleFonts.inter(
+                          // fontSize: 15.0,
+                          fontWeight: FontWeight.w800,
                           // color: Colors.white,
                           shadows: settings.isDarkMode
                               ? <Shadow>[

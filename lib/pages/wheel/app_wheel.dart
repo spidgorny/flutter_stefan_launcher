@@ -55,7 +55,7 @@ class _WheelState extends State<Wheel> {
           ),
           Column(
             children: [
-              Container(height: 85),
+              Container(height: 145),
               Expanded(child: ScrollableFavoritesWheel()),
 
               // children: List.generate(dataRepo.favorites.length, (index) => index)

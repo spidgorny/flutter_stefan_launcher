@@ -53,7 +53,6 @@ dependencies:
   collection: ^1.19.1
   settings_ui: ^2.0.2
   provider: ^6.1.5
-  flutter_launcher_icons: ^0.14.3
   r_nav_n_sheet: ^1.1.0
   app_settings: ^6.1.1
   share_plus: ^11.0.0
@@ -70,13 +69,14 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 flutter_native_splash:
   color: "#ffffff"
-  image: "assets/First logo detoxed.png"
+  image: "assets/LogoCrisp.png"
 
 # The following section is specific to Flutter packages.
 flutter:

@@ -154,15 +154,20 @@ class _ScrollableFavoritesWheelState extends State<ScrollableFavoritesWheel> {
                   Container(
                     width: 30,
                     alignment: Alignment.centerRight,
-                    padding: EdgeInsets.only(right: 8),
+                    padding: EdgeInsets.only(right: 20),
                     child: Container(
                       // This is the base item structure
-                      width: 1 + itemScale * 10,
-                      height: 5 * itemScale / 1.5,
+                      width: 0.1 + itemScale * itemScale * 4,
+                      height: 6 * itemScale / 1.5,
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(
-                          itemOpacity,
-                        ), // Dynamic color example
+                        color: settings.isDarkMode
+                            ? Colors.white.withOpacity(
+                                itemOpacity * itemOpacity * itemOpacity,
+                              )
+                            : Colors.black.withOpacity(
+                                itemOpacity * itemOpacity * itemOpacity,
+                              ),
+                        // Dynamic color example
                         borderRadius: BorderRadius.all(Radius.circular(10)),
                         // borderRadius: BorderRadius.only(
                         //   topLeft: Radius.circular(10.0),

@@ -22,7 +22,11 @@ class _SettingsPageState extends State<SettingsPage> {
     final settings = watch(di<Settings>());
     final themeNotifier = watch(di<ThemeNotifier>());
     return Scaffold(
-      appBar: AppBar(title: Text('Settings')),
+      backgroundColor: settings.isDarkMode ? Colors.black : Colors.white,
+      appBar: AppBar(
+        backgroundColor: settings.isDarkMode ? Colors.black : Colors.white,
+        title: Text('Settings'),
+      ),
       body: SettingsList(
         platform: DevicePlatform.android,
         sections: [

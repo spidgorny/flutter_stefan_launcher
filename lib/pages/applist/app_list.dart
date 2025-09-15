@@ -38,7 +38,7 @@ class _AppListState extends State<AppList> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrintX('build');
+    // debugPrintX('build');
     var appListService = getIt<AppListService>();
 
     final dataRepo = watch(di<DataRepo>());
@@ -59,9 +59,10 @@ class _AppListState extends State<AppList> {
     //       )
     //       .toList();
     // }
+    return Container(color: Colors.green);
 
     Widget x = Scaffold(
-      // backgroundColor: Colors.white,
+      backgroundColor: Colors.pink,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppBar(

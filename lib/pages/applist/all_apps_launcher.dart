@@ -52,9 +52,11 @@ class _AllAppsLauncherState extends State<AllAppsLauncher> {
     }
 
     Widget x = Scaffold(
+      backgroundColor: settings.isDarkMode ? Colors.black : Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppBar(
+          backgroundColor: settings.isDarkMode ? Colors.black : Colors.white,
           leading: IconButton(
             color: settings.isDarkMode ? Colors.white : Colors.black,
             onPressed: () {
